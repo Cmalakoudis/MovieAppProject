@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MoviesApplicationCM</string>
+    <string name="Movies">Movies</string>
+    <string name="Movie_Details">Movie Details</string>
+    <string name="back_arrow">Back arrow</string>
+    <string name="popcorn_bucket">Popcorn bucket</string>
+</resources>
