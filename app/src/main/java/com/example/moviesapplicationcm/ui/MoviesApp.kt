@@ -88,7 +88,8 @@ fun MoviesApp(
     Scaffold(
         topBar = {
             MoviesTopAppBar(
-                canNavigateBack = navController.previousBackStackEntry != null,
+//                canNavigateBack = navController.previousBackStackEntry != null,
+                loggedIn = false,
                 navigateUp = { navController.navigateUp() }
             )
         }

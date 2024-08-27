@@ -21,6 +21,7 @@ retrofit2KotlinxSerializationConverter = "1.0.0"
 material3Android = "1.2.1"
 composeMaterial = "1.3.1"
 lifecycleRuntimeComposeAndroid = "2.8.4"
+composeMaterial3 = "1.0.0-alpha23"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,7 @@ retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
+androidx-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
