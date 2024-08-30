@@ -38,13 +38,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.model.Movie
+import com.example.moviesapplicationcm.ui.MovieViewModel
+import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import com.example.moviesapplicationcm.ui.theme.White
 
 
 @Composable
-fun MovieDetailsPopUp(movie: Movie) {
+fun MovieDetailsPopUp(movie: Movie, myViewModel: MovieViewModel, onDetailsPressed: ()->Unit) {
     Card(
         modifier = Modifier.size(width = 345.dp, height = 249.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
@@ -71,14 +74,14 @@ fun MovieDetailsPopUp(movie: Movie) {
             Row (modifier = Modifier
                 .fillMaxWidth()
                 .height(24.dp), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "very long movie title that goes out of bounds",modifier = Modifier.width(235.dp), overflow = TextOverflow.Ellipsis , color = MaterialTheme.colorScheme.onSurface,fontSize = 20.sp  , fontWeight = FontWeight(700), lineHeight = 24.2.sp)
+                Text(text = movie.title,modifier = Modifier.width(235.dp), overflow = TextOverflow.Ellipsis , color = MaterialTheme.colorScheme.onSurface,fontSize = 20.sp  , fontWeight = FontWeight(700), lineHeight = 24.2.sp)
                 Spacer(modifier = Modifier.width(16.dp))
                 IconButton(onClick ={/*send heart true/false */} ,modifier = Modifier.size(24.dp),) {
                     Icon(painter = heartPainter, contentDescription = heartStringResource ,
                         tint = MaterialTheme.colorScheme.primary)
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick ={/*send heart true/false */} ,modifier = Modifier.size(24.dp),) {
+                IconButton(onClick ={myViewModel.closePopUp()} ,modifier = Modifier.size(24.dp),) {
                     Icon(painter = painterResource(id = R.drawable.close), contentDescription = null ,
                         tint = MaterialTheme.colorScheme.onBackground)
                 }
@@ -89,8 +92,8 @@ fun MovieDetailsPopUp(movie: Movie) {
             Row (modifier = Modifier
                 .width(313.dp)
                 .height(152.dp)) {
-                Image(
-                    painterResource(id = movie.posterPath),
+                AsyncImage(
+                    model = movie.posterPath,
                     contentDescription = null,
                     modifier = Modifier
                         .width(120.dp)
@@ -176,7 +179,7 @@ fun MovieDetailsPopUp(movie: Movie) {
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = {/*Go to details Page */},
+            TextButton(onClick = {onDetailsPressed()},
                 colors = ButtonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary, disabledContainerColor = White, disabledContentColor = White),
                 modifier = Modifier
                     .width(110.dp)
@@ -208,7 +211,9 @@ fun LogInInfoPopUp(movie: Movie) {
             .padding(vertical = 8.dp, horizontal = 16.dp), horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top) {
 
-            Row(modifier = Modifier.height(26.1.dp).width(313.dp),
+            Row(modifier = Modifier
+                .height(26.1.dp)
+                .width(313.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -259,10 +264,12 @@ fun LogInInfoPopUp(movie: Movie) {
 @Preview
 @Composable
 fun PreviewMovieDetailsPopUp() {
-    MovieListScreen(detailsPanel = true)
+    MoviesApplicationCMTheme {
+//        MovieListScreen(detailsPanel = true)
+    }
 }
 @Preview
 @Composable
 fun PreviewLoginInfoPopUp() {
-    MovieListScreen(loginInfoPanel = true)
+//    MovieListScreen(loginInfoPanel = true)
 }

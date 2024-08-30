@@ -24,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,17 +37,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.Text
+import coil.compose.AsyncImage
 import com.example.moviesapplicationcm.R
+import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.model.Movie
+import com.example.moviesapplicationcm.ui.MovieViewModel
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import com.example.moviesapplicationcm.ui.theme.White
 
 @Composable
-fun MovieDetailsScreen(movie: Movie) {
-    BasicScreenLayout(
-        screenContent = { MovieDetailsContent(movie)},
-    )
+fun MovieDetailsScreen(movie: Movie,myViewModel: MovieViewModel) {
+    val uiState by myViewModel.uiState.collectAsState()
+    MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
+
+        BasicScreenLayout(
+            screenContent = { MovieDetailsContent(movie) },
+            myViewModel = myViewModel
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +71,7 @@ fun MovieDetailsContent(movie: Movie) {
         Box(modifier = Modifier
             .width(393.dp)
             .height(221.06.dp)) {
-            Image(painterResource(id = movie.backRoundPath),
+            AsyncImage(model = movie.backRoundPath,
                 contentDescription = null, contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(393.dp)
@@ -247,9 +258,9 @@ fun MovieStaff(name:String, imageId: Int) {
 @Composable
 fun MovieDetailsPreview() {
     MoviesApplicationCMTheme {
-        val myMovie = Movie(1, stringResource(id = R.string.movie_title), stringResource(id = R.string.movie_discription), R.drawable.previewpic,
-            R.drawable.previewbackround ,
-            stringResource(id = R.string.movie_release_date), stringResource(id = R.string.movie_rating), false)
-        MovieDetailsScreen(myMovie)
+//        val myMovie = Movie(1, stringResource(id = R.string.movie_title), stringResource(id = R.string.movie_discription), R.drawable.previewpic,
+//            R.drawable.previewbackround ,
+//            stringResource(id = R.string.movie_release_date), stringResource(id = R.string.movie_rating),12, false)
+//        MovieDetailsScreen(myMovie)
     }
 }

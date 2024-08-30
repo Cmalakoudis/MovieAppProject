@@ -90,7 +90,6 @@ private fun MovieBottomAppWholeBarPreview() {
     MoviesApplicationCMTheme {
         Surface {
             LogInScreen(
-                topBarTitle = R.string.app_name,
                 onNameChange = {},
                 onKeyboardDone = {},
                 userName = "username"

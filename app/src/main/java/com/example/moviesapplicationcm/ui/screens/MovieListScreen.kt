@@ -35,6 +35,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -52,42 +54,66 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.Scaffold
 import com.example.moviesapplicationcm.R
+import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.model.Movie
+import com.example.moviesapplicationcm.ui.MovieViewModel
+import com.example.moviesapplicationcm.ui.MoviesViewModelProvider
+import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import com.example.moviesapplicationcm.ui.theme.White
 
 @Composable
-fun MovieListContent() {
+fun MovieListContent(uiState: AppUIState.MovieListData, myViewModel: MovieViewModel) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp) , contentPadding = PaddingValues(16.dp)) {
-        items(10) {
-            MovieCard(movie = Movie(1, stringResource(id = R.string.movie_title), stringResource(id = R.string.movie_discription), R.drawable.previewpic,R.drawable.previewbackround ,stringResource(id = R.string.movie_release_date), stringResource(id = R.string.movie_rating), false))
+        items(uiState.movieList.size) { movie ->
+            MovieCard(uiState.movieList[movie],myViewModel )
         }
     }
 }
 
 @Composable
-fun MovieListScreen (detailsPanel:Boolean = false, loginInfoPanel:Boolean = false) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        BasicScreenLayout(
-            screenContent = { MovieListContent() },
-            topBarTitle = R.string.app_name,
-            onNameChange = { /*TODO*/ },
-            onKeyboardDone = { /*TODO*/ },
-            userName = "",
-        )
-        val myMovie = Movie(1, stringResource(id = R.string.movie_title), stringResource(id = R.string.movie_discription), R.drawable.previewpic,R.drawable.previewbackround ,stringResource(id = R.string.movie_release_date), stringResource(id = R.string.movie_rating), false)
-        if (detailsPanel) {
-            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                MovieDetailsPopUp(myMovie)
-            }
-        } else if (loginInfoPanel) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                LogInInfoPopUp(movie = myMovie)
+fun MovieListScreen (myViewModel: MovieViewModel, onDetailsPressed: ()->Unit) {
+    val uiState by myViewModel.uiState.collectAsState()
+    val detailsPanel = uiState.movieAppUiState.detailsPopUp
+    val loginInfoPanel = false
+    MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            BasicScreenLayout(
+                screenContent = { MovieListContent(uiState.movieListData, myViewModel) },
+                topBarTitle = R.string.app_name,
+                onNameChange = { /*TODO*/ },
+                userName = "",
+                myViewModel = myViewModel,
+            )
+            val myMovie = Movie(
+                1,
+                stringResource(id = R.string.movie_title),
+                stringResource(id = R.string.movie_discription),
+                "R.drawable.previewpic",
+                "R.drawable.previewbackround",
+                stringResource(id = R.string.movie_release_date),
+                stringResource(id = R.string.movie_rating),
+                123,
+                false
+            )
+            if (detailsPanel) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MovieDetailsPopUp(uiState.movieAppUiState.detailedMovie, myViewModel, onDetailsPressed = onDetailsPressed)
+                }
+            } else if (loginInfoPanel) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LogInInfoPopUp(movie = myMovie)
+                }
             }
         }
     }
@@ -96,5 +122,5 @@ fun MovieListScreen (detailsPanel:Boolean = false, loginInfoPanel:Boolean = fals
 @Preview
 @Composable
 fun PreviewMovieListScreen() {
-    MovieListScreen()
+//    MovieListScreen()
 }

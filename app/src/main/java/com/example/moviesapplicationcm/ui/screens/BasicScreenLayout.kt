@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.ui.MovieViewModel
+import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 
 @Composable
 fun BasicScreenLayout(
@@ -34,49 +36,55 @@ fun BasicScreenLayout(
     screenContent: @Composable ()->Unit,
     @StringRes topBarTitle: Int = 1,
     onNameChange: (String) -> Unit = {}, // viewmodel.update username
-    onKeyboardDone: () -> Unit = {}, //viewmodel.login
+    floatingActionButton:@Composable () -> Unit = {}, //viewmodel.login
     userName: String = "JACOB",
-    myViewModel: MovieViewModel = viewModel(),
+    myViewModel: MovieViewModel,
 ) {
-    Surface(color = colorScheme.primary) {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            topBar = { MoviesTopAppBar(loggedIn = false, navigateUp = { /*TODO*/ }) },
-            bottomBar = { MoviesBottomAppBar({}, {}, {}, {}, {}, {}, true, {}) }
+        Surface(color = colorScheme.primary) {
+            Scaffold(
+                modifier = modifier.fillMaxSize(),
+                topBar = {
+                    MoviesTopAppBar(
+                        loggedIn = false,
+                        navigateUp = { /*TODO*/ },
+                        checkDark = { myViewModel.changeTheme() })
+                },
+                floatingActionButton = floatingActionButton,
+                bottomBar = { MoviesBottomAppBar({}, {}, {}, {}, {}, {}, true, {}) }
 
-        ) { paddingValues ->
-            Column(
-                modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val mediumPadding = 16.dp
-                HorizontalDivider(
-                    modifier = modifier
-                        .width(360.dp)
-                        .align(Alignment.CenterHorizontally),
-                    thickness = 2.dp, color = colorScheme.primary,
-                )
-                Spacer(modifier = modifier.weight(1f))
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    screenContent()
+            ) { paddingValues ->
+                Column(
+                    modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val mediumPadding = 16.dp
+                    HorizontalDivider(
+                        modifier = modifier
+                            .width(360.dp)
+                            .align(Alignment.CenterHorizontally),
+                        thickness = 2.dp, color = colorScheme.primary,
+                    )
+                    Spacer(modifier = modifier.weight(1f))
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        screenContent()
+                    }
                 }
             }
         }
     }
 
-}
+
 @Preview
 @Composable
 fun LayoutScreenPreview() {
-    BasicScreenLayout(
-        screenContent = { Image(painter =painterResource(R.drawable.heart_full), contentDescription =null )},
-        topBarTitle = R.string.app_name,
-        onNameChange = {},
-        onKeyboardDone = {},
-        userName = "username"
-    )
+//    BasicScreenLayout(
+//        screenContent = { Image(painter =painterResource(R.drawable.heart_full), contentDescription =null )},
+//        topBarTitle = R.string.app_name,
+//        onNameChange = {},
+//        userName = "username"
+//    )
 }
 

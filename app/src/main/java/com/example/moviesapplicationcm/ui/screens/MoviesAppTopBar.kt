@@ -69,7 +69,7 @@ import androidx.wear.compose.material.MaterialTheme.colors
 @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun MoviesTopAppBar(
-        checkDark: (Boolean) -> Unit = {},
+        checkDark: (Boolean) -> Unit,
         onFilterAllTasks: () -> Unit = {},
         onFilterActiveTasks: () -> Unit = {},
         onFilterCompletedTasks: () -> Unit = {},

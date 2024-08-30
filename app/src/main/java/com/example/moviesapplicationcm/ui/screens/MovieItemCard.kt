@@ -38,26 +38,30 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.model.Movie
+import com.example.moviesapplicationcm.ui.MovieViewModel
 
 
 @Composable
-fun MovieCard(movie: Movie, detailPanel:Boolean = false) {
+fun MovieCard(movie: Movie, myViewModel: MovieViewModel) {
     Card(
         modifier = Modifier.size(width = 361.dp, height = 153.dp),
-        onClick = { /*detailPanel = !detailPanel */},
+        onClick = {
+            myViewModel.onPressedCard(movie)
+        },
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
         shape = RoundedCornerShape(6.dp),) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Image( colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface, blendMode = BlendMode.Softlight, )
+            AsyncImage( colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface, blendMode = BlendMode.Softlight, )
                 , modifier = Modifier.fillMaxSize(), alpha = 0.25f
-                , contentScale = ContentScale.Crop, painter = painterResource(id = movie.backRoundPath), contentDescription = null)
+                , contentScale = ContentScale.Crop, model = movie.backRoundPath, contentDescription = null)
             Row (modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
 
-                Image(painterResource(id = movie.posterPath) , contentDescription = null, modifier = Modifier
+                AsyncImage(model = movie.posterPath , contentDescription = null, modifier = Modifier
                     .width(95.dp)
                     .height(120.dp)
                     .clip(
@@ -137,6 +141,6 @@ fun MovieCard(movie: Movie, detailPanel:Boolean = false) {
 @Preview
 @Composable
 fun MovieCardPreview() {
-    val myMovie = Movie(1, stringResource(id = R.string.movie_title), stringResource(id = R.string.movie_discription), R.drawable.previewpic,R.drawable.previewbackround ,stringResource(id = R.string.movie_release_date), stringResource(id = R.string.movie_rating), false)
-    MovieCard(movie = myMovie)
+//    val myMovie = Movie(1, stringResource(id = R.string.movie_title), stringResource(id = R.string.movie_discription), R.drawable.previewpic,R.drawable.previewbackround ,stringResource(id = R.string.movie_release_date), stringResource(id = R.string.movie_rating), 123,false)
+//    MovieCard(movie = myMovie)
 }

@@ -5,6 +5,12 @@ import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.moviesapplicationcm.ui.MovieViewModel
+import com.example.moviesapplicationcm.ui.MoviesApp
+import com.example.moviesapplicationcm.ui.MoviesViewModelProvider
 import com.example.moviesapplicationcm.ui.screens.MovieDetailsPreview
 import com.example.moviesapplicationcm.ui.screens.MovieDetailsScreen
 import com.example.moviesapplicationcm.ui.screens.MovieListScreen
@@ -19,13 +25,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MoviesApplicationCMTheme {
-//                    LogInScreen(        topBarTitle = R.string.app_name,
-//                        onNameChange = {},
-//                        onKeyboardDone = {},
-//                        userName = "")
-                    PreviewLoginInfoPopUp()
-                    }
+                MoviesApp()
+
         }
     }
 }
