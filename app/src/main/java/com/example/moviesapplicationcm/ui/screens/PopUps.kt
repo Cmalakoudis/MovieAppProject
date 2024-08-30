@@ -38,8 +38,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.moviesapplicationcm.R
+import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.model.Movie
 import com.example.moviesapplicationcm.ui.MovieViewModel
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
@@ -47,147 +49,188 @@ import com.example.moviesapplicationcm.ui.theme.White
 
 
 @Composable
-fun MovieDetailsPopUp(movie: Movie, myViewModel: MovieViewModel, onDetailsPressed: ()->Unit) {
-    Card(
-        modifier = Modifier.size(width = 345.dp, height = 249.dp),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
-        colors = CardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f), contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContentColor = MaterialTheme.colorScheme.surface, disabledContainerColor = MaterialTheme.colorScheme.onSurface),
-        shape = RoundedCornerShape(6.dp),
-        elevation = CardDefaults.cardElevation( 5.dp)
-    ) {
-        val heartPainter = if (movie.isFavourite) {
-            painterResource(id = R.drawable.heart_full)
-        } else {
-            painterResource(id = R.drawable.heart_off)
-        }
-        val heartStringResource = if (movie.isFavourite) {
-            stringResource(id = R.string.favourite)
-        } else {
-            stringResource(id = R.string.not_favourite)
-        }
-        Column (modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp, horizontal = 16.dp), horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top) {
+fun MovieDetailsPopUp(
+    uiState: AppUIState,
+    movieId: Int,
+    onDetailsPressed: ()->Unit,
+    makeFavourite: (movie: Movie) -> Boolean,
+    isDarkTheme: Boolean,
+    onDismiss: () -> Unit
+) {
+    val movie = uiState.movieListData.movieList.find { it.id == movieId }
+    if (movie == null) return
+    Dialog(onDismissRequest = { onDismiss() }) {
 
-            Row (modifier = Modifier
-                .fillMaxWidth()
-                .height(24.dp), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-                Text(text = movie.title,modifier = Modifier.width(235.dp), overflow = TextOverflow.Ellipsis , color = MaterialTheme.colorScheme.onSurface,fontSize = 20.sp  , fontWeight = FontWeight(700), lineHeight = 24.2.sp)
-                Spacer(modifier = Modifier.width(16.dp))
-                IconButton(onClick ={/*send heart true/false */} ,modifier = Modifier.size(24.dp),) {
-                    Icon(painter = heartPainter, contentDescription = heartStringResource ,
-                        tint = MaterialTheme.colorScheme.primary)
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick ={myViewModel.closePopUp()} ,modifier = Modifier.size(24.dp),) {
-                    Icon(painter = painterResource(id = R.drawable.close), contentDescription = null ,
-                        tint = MaterialTheme.colorScheme.onBackground)
-                }
-            }
+        Card(
+            modifier = Modifier.size(width = 345.dp, height = 249.dp),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContentColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface
+            ),
+            shape = RoundedCornerShape(6.dp),
+            elevation = CardDefaults.cardElevation(5.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row (modifier = Modifier
-                .width(313.dp)
-                .height(152.dp)) {
-                AsyncImage(
-                    model = movie.posterPath,
-                    contentDescription = null,
+                Row(
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(152.dp)
-                        .clip(
-                            RoundedCornerShape(16.dp)
-                        ),
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Top
+                        .fillMaxWidth()
+                        .height(24.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .width(188.dp)
-                            .height(16.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Text(
+                        text = movie.title,
+                        modifier = Modifier.width(235.dp),
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(700),
+                        lineHeight = 24.2.sp
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    HeartButton(
+                        movieId = movie.id,
+                        uiState = uiState,
+                        onCLick = { makeFavourite(movie) },
+                        isDarkTheme = isDarkTheme
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { onDismiss() }, modifier = Modifier.size(24.dp),) {
                         Icon(
-                            painter = painterResource(id = R.drawable.star),
-                            contentDescription = stringResource(id = R.string.star),
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.secondary
+                            painter = painterResource(id = R.drawable.close),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = movie.rating,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight(600),
-                            lineHeight = 14.52.sp,
-                            letterSpacing = 0.12.sp
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "(3232)",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight(600),
-                            lineHeight = 14.52.sp,
-                            letterSpacing = 0.12.sp
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier
+                        .width(313.dp)
+                        .height(152.dp)
+                ) {
+                    AsyncImage(
+                        model = movie.posterPath,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(152.dp)
+                            .clip(
+                                RoundedCornerShape(16.dp)
+                            ),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Top
+                    ) {
                         Row(
                             modifier = Modifier
-                                .width(52.46.dp)
-                                .height(18.dp)
+                                .width(188.dp)
+                                .height(16.dp),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.calendarblank),
-                                contentDescription = stringResource(id = R.string.calendar),
+                                painter = painterResource(id = R.drawable.star),
+                                contentDescription = stringResource(id = R.string.star),
                                 modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
+                                tint = MaterialTheme.colorScheme.secondary
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = movie.releaseDate,
+                                text = movie.rating,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight(600),
+                                lineHeight = 14.52.sp,
+                                letterSpacing = 0.12.sp
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "(3232)",
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight(400),
-                                lineHeight = 14.52.sp
+                                fontWeight = FontWeight(600),
+                                lineHeight = 14.52.sp,
+                                letterSpacing = 0.12.sp
                             )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Row(
+                                modifier = Modifier
+                                    .width(52.46.dp)
+                                    .height(18.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.calendarblank),
+                                    contentDescription = stringResource(id = R.string.calendar),
+                                    modifier = Modifier.size(16.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = movie.releaseDate,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight(400),
+                                    lineHeight = 14.52.sp
+                                )
+                            }
                         }
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(
+                            text = movie.overview,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight(500),
+                            lineHeight = 14.52.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Left,
+                        )
                     }
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(
+                    onClick = { onDetailsPressed() },
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = White,
+                        disabledContentColor = White
+                    ),
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(25.dp),
+                    contentPadding = PaddingValues(0.dp),
 
-                    Spacer(modifier = Modifier.height(6.dp))
-
+                    ) {
                     Text(
-                        text = movie.overview,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight(500),
-                        lineHeight = 14.52.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Left,
+                        text = stringResource(id = R.string.details),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.width(78.dp),
+                        lineHeight = 17.sp,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(400)
                     )
                 }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = {onDetailsPressed()},
-                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary, disabledContainerColor = White, disabledContentColor = White),
-                modifier = Modifier
-                    .width(110.dp)
-                    .height(25.dp),
-                contentPadding = PaddingValues(0.dp),
-
-                ) {
-                Text(text = stringResource(id = R.string.details), textAlign = TextAlign.Center ,modifier = Modifier.width(78.dp), lineHeight = 17.sp, fontSize = 14.sp, fontWeight = FontWeight(400))
             }
         }
     }

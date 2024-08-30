@@ -17,54 +17,61 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.moviesapplicationcm.R
+import com.example.moviesapplicationcm.ui.MovieViewModel
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesBottomAppBar(
+    modifier: Modifier = Modifier,
+    myViewModel: MovieViewModel,
     openDrawer: () -> Unit = {},
     onFilterAllTasks: () -> Unit = {},
     onFilterActiveTasks: () -> Unit = {},
     onFilterCompletedTasks: () -> Unit = {},
     onClearCompletedTasks: () -> Unit = {},
     onRefresh: () -> Unit = {},
-    isPopular: Boolean,
-    navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
+    navigateUp: () -> Unit = {},
 ) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.tertiary,
         modifier = Modifier.fillMaxWidth(),){
+        var viewingPopular by remember{ mutableStateOf(myViewModel.uiState.value.movieAppUiState.viewingPopular)}
         Row(
             modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp, vertical = 16.dp), horizontalArrangement = Arrangement.Center){
             Spacer(modifier = Modifier.weight(0.05f))
-            TextButton(onClick = { /*TODO*/ },
+            TextButton(onClick = {viewingPopular = myViewModel.viewingPopular() },
                 modifier = Modifier.weight(1f),
-                enabled = isPopular,
-                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                                    disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                                    disabledContentColor = MaterialTheme.colorScheme.onTertiary)) {
+                enabled = !viewingPopular,
+                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.tertiary,
+                                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                                    disabledContainerColor = MaterialTheme.colorScheme.primary,
+                                    disabledContentColor = MaterialTheme.colorScheme.onPrimary)) {
                 Icon(painterResource(id = R.drawable.vector), contentDescription = null)
                 Spacer(modifier = Modifier.size(4.dp))
                 Text(text = stringResource(id = R.string.popular))
             }
             Spacer(modifier = Modifier.weight(0.10f))
-            TextButton(onClick = { /*TODO*/ },
+            TextButton(onClick = {viewingPopular =  myViewModel.viewingFavourites() },
                 modifier = Modifier.weight(1f),
-                enabled = !isPopular,
-                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                    disabledContentColor = MaterialTheme.colorScheme.onTertiary)) {
+                enabled = viewingPopular,
+                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary)) {
                 Icon(painterResource(id = R.drawable.heart_full) , contentDescription = null)
                 Spacer(modifier = Modifier.size(4.dp))
                 Text(text = stringResource(id = R.string.favourites))
@@ -79,7 +86,7 @@ fun MoviesBottomAppBar(
 private fun MovieBottomAppBarPreview() {
     MoviesApplicationCMTheme {
         Surface {
-            MoviesBottomAppBar(isPopular = true, navigateUp = { /*TODO*/ })
+//            MoviesBottomAppBar(isPopular = true, navigateUp = { /*TODO*/ })
         }
     }
 }
@@ -89,11 +96,11 @@ private fun MovieBottomAppBarPreview() {
 private fun MovieBottomAppWholeBarPreview() {
     MoviesApplicationCMTheme {
         Surface {
-            LogInScreen(
-                onNameChange = {},
-                onKeyboardDone = {},
-                userName = "username"
-            )
+//            LogInScreen(
+//                onNameChange = {},
+//                onKeyboardDone = {},
+//                 userName = "username"
+//            )
         }
     }
 }

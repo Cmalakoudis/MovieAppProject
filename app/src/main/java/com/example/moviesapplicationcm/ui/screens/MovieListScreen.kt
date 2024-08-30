@@ -1,90 +1,47 @@
 package com.example.moviesapplicationcm.ui.screens
 
-import android.text.style.BackgroundColorSpan
-import android.widget.Space
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.wear.compose.material.Scaffold
+import androidx.compose.ui.unit.dp
 import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.model.Movie
 import com.example.moviesapplicationcm.ui.MovieViewModel
-import com.example.moviesapplicationcm.ui.MoviesViewModelProvider
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
-import com.example.moviesapplicationcm.ui.theme.White
 
 @Composable
-fun MovieListContent(uiState: AppUIState.MovieListData, myViewModel: MovieViewModel) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp) , contentPadding = PaddingValues(16.dp)) {
-        items(uiState.movieList.size) { movie ->
-            MovieCard(uiState.movieList[movie],myViewModel )
-        }
-    }
-}
-
-@Composable
-fun MovieListScreen (myViewModel: MovieViewModel, onDetailsPressed: ()->Unit) {
+fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
     val uiState by myViewModel.uiState.collectAsState()
     val detailsPanel = uiState.movieAppUiState.detailsPopUp
     val loginInfoPanel = false
     MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
         Box(modifier = Modifier.fillMaxSize()) {
             BasicScreenLayout(
-                screenContent = { MovieListContent(uiState.movieListData, myViewModel) },
-                topBarTitle = R.string.app_name,
-                onNameChange = { /*TODO*/ },
-                userName = "",
+                screenContent = { MovieListContent(
+                    uiState = uiState,
+                    isDarkTheme = myViewModel.isDarkTheme(),
+                    onCardClicked = { movie -> myViewModel.onPressedCard(movie) },
+                    onFavouriteClick = { movie -> myViewModel.makeFavourite(movie) },
+                    retryAction = { myViewModel.getMovieList()}
+                    ) },
                 myViewModel = myViewModel,
             )
             val myMovie = Movie(
@@ -99,12 +56,23 @@ fun MovieListScreen (myViewModel: MovieViewModel, onDetailsPressed: ()->Unit) {
                 false
             )
             if (detailsPanel) {
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MovieDetailsPopUp(uiState.movieAppUiState.detailedMovie, myViewModel, onDetailsPressed = onDetailsPressed)
+                    val movie = uiState.movieListData.movieList.find { it.id == uiState.movieAppUiState.detailedMovieId }
+                    if(movie != null) {
+                        MovieDetailsPopUp(
+                            movieId = movie.id,
+                            uiState = uiState,
+                            isDarkTheme = myViewModel.isDarkTheme(),
+                            makeFavourite = myViewModel::makeFavourite,
+                            onDetailsPressed = onDetailsPressed,
+                            onDismiss = { myViewModel.closePopUp() }
+                        )
+                    }
                 }
             } else if (loginInfoPanel) {
                 Column(
@@ -117,6 +85,79 @@ fun MovieListScreen (myViewModel: MovieViewModel, onDetailsPressed: ()->Unit) {
             }
         }
     }
+}
+
+
+@Composable
+private fun MovieListContent(uiState: AppUIState,
+                             onCardClicked: (movie: Movie) -> Unit,
+                             isDarkTheme: Boolean,
+                             onFavouriteClick: (movie: Movie) -> Boolean,
+                             retryAction: () -> Unit) {
+    Log.d("MovieListScreen", "favouriteMovieIDs: ${uiState.movieListData.favouriteMovieIDs}")
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        when(uiState.networkUiState) {
+            AppUIState.NetworkUiState.Loading -> {
+                item {
+                    LoadingScreen()
+                }
+            }
+            AppUIState.NetworkUiState.Error -> {
+                item {
+                    ErrorScreen(retryAction = retryAction)
+                }
+            }
+            AppUIState.NetworkUiState.Success -> {
+                if(uiState.movieAppUiState.viewingPopular) {
+                    items(uiState.movieListData.movieList.size) { movieIndex ->
+                        val movie = uiState.movieListData.movieList[movieIndex]
+                        MovieCard(movieId = movie.id,
+                            onCardClicked =  onCardClicked,
+                            isDarkTheme = isDarkTheme,
+                            onFavouriteClick = onFavouriteClick,
+                            uiState = uiState
+                            )
+                    }
+                }
+                else {
+                    items(uiState.movieListData.favouriteMovieIDs.size) { movieIndex ->
+                        val movie = uiState.movieListData.movieList.find { it.id == uiState.movieListData.favouriteMovieIDs[movieIndex] }!!
+                        MovieCard(movieId = movie.id,
+                            onCardClicked =  onCardClicked,
+                            isDarkTheme = isDarkTheme,
+                            onFavouriteClick = onFavouriteClick,
+                            uiState = uiState
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+        CircularProgressIndicator(
+            modifier = Modifier.size(100.dp),
+            color = MaterialTheme.colorScheme.tertiary,
+            trackColor = MaterialTheme.colorScheme.secondary,
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen(retryAction: () -> Unit) {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
+        Text(text = "Error occurred. Retrying...", color = MaterialTheme.colorScheme.error)
+        Icon(painter = painterResource(id = R.drawable.baseline_error_outline_24)
+            , contentDescription = "Error occurred",
+            tint = MaterialTheme.colorScheme.error)
+    }
+    retryAction()
 }
 
 @Preview

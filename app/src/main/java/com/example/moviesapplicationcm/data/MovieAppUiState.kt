@@ -19,8 +19,9 @@ data class AppUIState(
         var darkTheme: Boolean = false,
         var isLoggedIn: Boolean = false,
         var viewingPopular: Boolean = true,
+        var userName:String = "",
         var detailsPopUp: Boolean = false,
-        var detailedMovie: Movie = Movie(1, "title", "description", "previewpic", "previewbackround", "releaseDate", "rating", 123, false),
+        var detailedMovieId: Int? =null
     )
 
     data class MovieListData(

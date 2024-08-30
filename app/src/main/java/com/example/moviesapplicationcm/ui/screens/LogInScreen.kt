@@ -48,21 +48,17 @@ import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 
 @Composable
 fun LogInScreen(
-    onNameChange: (String) -> Unit = {}, // viewmodel.update username
-    onKeyboardDone: () -> Unit = {}, //viewmodel.login
-    userName: String = "",
-    onFabPressed: ()-> Unit = {},
     modifier: Modifier = Modifier,
-    myViewModel: MovieViewModel = viewModel(factory = MoviesViewModelProvider.Factory)
+    onKeyboardDone: () -> Unit = {}, //viewmodel.login
+    onFabPressed: ()-> Unit = {},
+    myViewModel: MovieViewModel
 ) {
     val uiState by myViewModel.uiState.collectAsState()
     MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
 
         Box(modifier = Modifier.fillMaxSize()) {
             BasicScreenLayout(
-                screenContent = { LogInScreenContent(myViewModel = myViewModel) },
-                topBarTitle = R.string.app_name,
-                onNameChange = { /*TODO*/ },
+                screenContent = { LogInScreenContent(myViewModel = myViewModel, onKeyboardDone = onKeyboardDone) },
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = { onFabPressed() },
@@ -72,7 +68,6 @@ fun LogInScreen(
                         Icon(Icons.Filled.Check, stringResource(id = R.string.app_name))
                     }
                 },
-                userName = "",
                 myViewModel = myViewModel
             )
         }
@@ -81,12 +76,11 @@ fun LogInScreen(
 
 @Composable
 fun LogInScreenContent(
-    onNameChange: (String) -> Unit = {}, // viewmodel.update username
-    onKeyboardDone: () -> Unit = {}, //viewmodel.login
-    userName: String = "",
     modifier: Modifier = Modifier,
+    onKeyboardDone: () -> Unit = {}, //viewmodel.login
     myViewModel: MovieViewModel
 ) {
+    val uiState by myViewModel.uiState.collectAsState()
     Column(
             modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
@@ -132,7 +126,7 @@ fun LogInScreenContent(
                         color = colorScheme.onSurface,
                     )
                     OutlinedTextField(
-                        value = userName,
+                        value = uiState.movieAppUiState.userName,
                         singleLine = true,
                         shape = shapes.large,
                         modifier = Modifier.fillMaxWidth(),
@@ -141,14 +135,13 @@ fun LogInScreenContent(
                             unfocusedContainerColor = colorScheme.primary,
                             disabledContainerColor = colorScheme.onSurface,
                         ),
-                        onValueChange = onNameChange,
-                        //                         isError = {},
+                        onValueChange ={ myViewModel.updateUserName(it)},
                         label = {
                             Text(
                                 text = stringResource(id = R.string.username_example),
                                 style = typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
-                                color = colorScheme.onPrimary
+                                color = colorScheme.onSurface
                             )
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(

@@ -1,8 +1,10 @@
 package com.example.moviesapplicationcm.data
 
 import com.example.moviesapplicationcm.model.Movie
+import com.example.moviesapplicationcm.model.MovieDbCastResponse
 import com.example.moviesapplicationcm.model.MovieDbResponse
 import com.example.moviesapplicationcm.model.MovieDetails
+import com.example.moviesapplicationcm.model.MovieDetailsResponse
 import com.example.moviesapplicationcm.network.MoviesApiService
 import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
@@ -17,8 +19,10 @@ interface MoviesRepository {
     /**
      * Retrieve an movie from the given data source that matches with the [id].
      */
-//    fun getMovie(id: Int): Flow<Movie?>
-    fun getMovie(id: Int): Flow<List<String>>
+    suspend fun getMovieDetails(id: Int): MovieDetailsResponse
+
+    suspend fun getCastDetails(id: Int): MovieDbCastResponse
+
 }
 
 /**
@@ -31,7 +35,7 @@ class NetworkMoviesRepository(
     private val authToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5N2M3YmJlYTViMDA0N2M4NjQ5ZWFkNWU2ZTkxZTEzNiIsIm5iZiI6MTcyNDg1MDcxMy45OTgyNDksInN1YiI6IjY2Y2NjMmEyNjI4NzUxNGJkNTJkN2JmMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Plih039xFRNPZL8JVlZcntGExrTWq0rXiayJPmiNej8"
     override suspend fun getMoviesList(): MovieDbResponse = moviesApiService.getMovies(authToken = authToken)
 
-    override fun getMovie(id: Int): Flow<List<String>> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getMovieDetails(id: Int): MovieDetailsResponse = moviesApiService.getMovieDetails(authToken = authToken, movieId = id)
+
+    override suspend fun getCastDetails(id: Int): MovieDbCastResponse = moviesApiService.getCastDetails(authToken = authToken, movieId = id)
 }

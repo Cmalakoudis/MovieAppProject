@@ -64,12 +64,14 @@ import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.wear.compose.material.MaterialTheme.colors
+import com.example.moviesapplicationcm.ui.MovieViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun MoviesTopAppBar(
         checkDark: (Boolean) -> Unit,
+        myViewModel: MovieViewModel,
         onFilterAllTasks: () -> Unit = {},
         onFilterActiveTasks: () -> Unit = {},
         onFilterCompletedTasks: () -> Unit = {},
@@ -105,7 +107,7 @@ import androidx.wear.compose.material.MaterialTheme.colors
                 Switch(modifier = modifier
                     .width(32.dp)
                     .height(18.dp)
-                    .padding(vertical = 7.dp), checked = true , onCheckedChange = checkDark,
+                    .padding(vertical = 7.dp), checked = myViewModel.isDarkTheme() , onCheckedChange = checkDark,
                     colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.onTertiary,
                                                     checkedTrackColor = MaterialTheme.colorScheme.primary,
                                                     uncheckedBorderColor = MaterialTheme.colorScheme.primary,
@@ -169,112 +171,13 @@ import androidx.wear.compose.material.MaterialTheme.colors
 //    }
 //}
 
-@Composable
-private fun TopAppBarDropdownMenu(
-    iconContent: @Composable () -> Unit,
-    content: @Composable ColumnScope.(() -> Unit) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        IconButton(onClick = { expanded = !expanded }) {
-            iconContent()
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.wrapContentSize(Alignment.TopEnd)
-        ) {
-            content { expanded = !expanded }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun StatisticsTopAppBar(openDrawer: () -> Unit) {
-    TopAppBar(
-        title = { Text(text = "statistics drawer") },
-        navigationIcon = {
-            IconButton(onClick = openDrawer) {
-                Icon(Icons.Filled.Menu, "menu open drawer")
-            }
-        },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TaskDetailTopAppBar(onBack: () -> Unit, onDelete: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(text = "Task Detail")
-        },
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(Icons.Filled.ArrowBack, "menu back")
-            }
-        },
-        actions = {
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Filled.Delete, "menu delete task")
-            }
-        },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddEditTaskTopAppBar(@StringRes title: Int, onBack: () -> Unit) {
-    TopAppBar(
-        title = { Text(text = stringResource(title)) },
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(Icons.Filled.ArrowBack, "menu back")
-            }
-        },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
 
 @Preview
 @Composable
 private fun MoviesTopAppBarPreview() {
     MoviesApplicationCMTheme {
         Surface {
-            MoviesTopAppBar({}, {}, {}, {}, {}, loggedIn = false, navigateUp = {}, )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun StatisticsTopAppBarPreview() {
-    MoviesApplicationCMTheme {
-        Surface {
-            StatisticsTopAppBar { }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun TaskDetailTopAppBarPreview() {
-    MoviesApplicationCMTheme {
-        Surface {
-            TaskDetailTopAppBar({ }, { })
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun AddEditTaskTopAppBarPreview() {
-    MoviesApplicationCMTheme {
-        Surface {
-            AddEditTaskTopAppBar(R.string.app_name) { }
+//            MoviesTopAppBar({}, {}, {}, {}, {}, loggedIn = false, navigateUp = {}, )
         }
     }
 }

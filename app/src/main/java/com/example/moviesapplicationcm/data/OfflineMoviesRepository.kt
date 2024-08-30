@@ -1,8 +1,10 @@
 package com.example.moviesapplicationcm.data
 
 import com.example.moviesapplicationcm.model.Movie
+import com.example.moviesapplicationcm.model.MovieDbCastResponse
 import com.example.moviesapplicationcm.model.MovieDbResponse
 import com.example.moviesapplicationcm.model.MovieDetails
+import com.example.moviesapplicationcm.model.MovieDetailsResponse
 import kotlinx.coroutines.flow.Flow
 
 class OfflineMoviesRepository(private val movieDao: MoviesDao) : MoviesRepository {
@@ -10,8 +12,12 @@ class OfflineMoviesRepository(private val movieDao: MoviesDao) : MoviesRepositor
         TODO()
     }
 
-    override fun getMovie(id: Int): /*Flow<Movie?>*/ Flow<List<String>> {
-        return movieDao.getMovie(id)
+    override suspend fun getMovieDetails(movieId: Int): MovieDetailsResponse {
+        TODO()
+    }
+
+    override suspend fun getCastDetails(id: Int): MovieDbCastResponse {
+        TODO("Not yet implemented")
     }
 
     suspend fun insertMovie(movie: MovieItem) {

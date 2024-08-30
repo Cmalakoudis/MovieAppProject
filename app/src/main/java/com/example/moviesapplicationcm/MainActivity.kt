@@ -1,6 +1,7 @@
 package com.example.moviesapplicationcm
 
 import android.os.Bundle
+import android.view.Surface
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+
                 MoviesApp()
 
         }

@@ -34,10 +34,7 @@ import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 fun BasicScreenLayout(
     modifier: Modifier = Modifier,
     screenContent: @Composable ()->Unit,
-    @StringRes topBarTitle: Int = 1,
-    onNameChange: (String) -> Unit = {}, // viewmodel.update username
     floatingActionButton:@Composable () -> Unit = {}, //viewmodel.login
-    userName: String = "JACOB",
     myViewModel: MovieViewModel,
 ) {
         Surface(color = colorScheme.primary) {
@@ -47,10 +44,11 @@ fun BasicScreenLayout(
                     MoviesTopAppBar(
                         loggedIn = false,
                         navigateUp = { /*TODO*/ },
-                        checkDark = { myViewModel.changeTheme() })
+                        checkDark = { myViewModel.changeTheme() },
+                        myViewModel = myViewModel)
                 },
                 floatingActionButton = floatingActionButton,
-                bottomBar = { MoviesBottomAppBar({}, {}, {}, {}, {}, {}, true, {}) }
+                bottomBar = { MoviesBottomAppBar(myViewModel = myViewModel) }
 
             ) { paddingValues ->
                 Column(
