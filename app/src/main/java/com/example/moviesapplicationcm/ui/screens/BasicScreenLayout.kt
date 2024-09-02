@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,42 +38,51 @@ fun BasicScreenLayout(
     floatingActionButton:@Composable () -> Unit = {}, //viewmodel.login
     myViewModel: MovieViewModel,
 ) {
-        Surface(color = colorScheme.primary) {
-            Scaffold(
-                modifier = modifier.fillMaxSize(),
-                topBar = {
-                    MoviesTopAppBar(
-                        loggedIn = false,
-                        navigateUp = { /*TODO*/ },
-                        checkDark = { myViewModel.changeTheme() },
-                        myViewModel = myViewModel)
-                },
-                floatingActionButton = floatingActionButton,
-                bottomBar = { MoviesBottomAppBar(myViewModel = myViewModel) }
+    val uiState by myViewModel.uiState.collectAsState()
+    Surface(color = colorScheme.primary) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            topBar = {
+                MoviesTopAppBar(
+                    uiState = uiState,
+                    onProfileClicked = { myViewModel.onProfileClicked() },
+                    checkDark = { myViewModel.changeTheme() })
+            },
+            floatingActionButton = floatingActionButton,
+            bottomBar = { MoviesBottomAppBar(myViewModel = myViewModel) }
 
-            ) { paddingValues ->
-                Column(
-                    modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val mediumPadding = 16.dp
-                    HorizontalDivider(
-                        modifier = modifier
-                            .width(360.dp)
-                            .align(Alignment.CenterHorizontally),
-                        thickness = 2.dp, color = colorScheme.primary,
-                    )
-                    Spacer(modifier = modifier.weight(1f))
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        screenContent()
+        ) { paddingValues ->
+            Column(
+                modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val mediumPadding = 16.dp
+                HorizontalDivider(
+                    modifier = modifier
+                        .width(360.dp)
+                        .align(Alignment.CenterHorizontally),
+                    thickness = 2.dp, color = colorScheme.primary,
+                )
+                Spacer(modifier = modifier.weight(1f))
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    screenContent()
+                    if (uiState.movieAppUiState.profilePopUp) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LogInInfoPopUp(uiState= uiState, onDismiss = { myViewModel.closePopUp() })
+                        }
                     }
                 }
             }
         }
     }
+}
 
 
 @Preview

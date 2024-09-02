@@ -17,10 +17,11 @@ data class AppUIState(
 
     data class MovieAppUiState(
         var darkTheme: Boolean = false,
-        var isLoggedIn: Boolean = false,
+        var isLoggedIn: Boolean = true,
         var viewingPopular: Boolean = true,
         var userName:String = "",
         var detailsPopUp: Boolean = false,
+        var profilePopUp: Boolean = false,
         var detailedMovieId: Int? =null
     )
 

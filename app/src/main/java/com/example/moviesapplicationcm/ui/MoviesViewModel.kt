@@ -3,6 +3,7 @@ package com.example.moviesapplicationcm.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviesapplicationcm.data.AppUIState
+import com.example.moviesapplicationcm.data.MovieItem
 import com.example.moviesapplicationcm.data.MoviesRepository
 import com.example.moviesapplicationcm.data.OfflineMoviesRepository
 import com.example.moviesapplicationcm.model.Movie
@@ -29,16 +30,16 @@ class MovieViewModel(
     private val _uiState = MutableStateFlow(AppUIState())
     val uiState: StateFlow<AppUIState> = _uiState.asStateFlow()
 
-    private lateinit var offlineData: Flow<List<String>>
+    private lateinit var offlineData: Flow<List<Int>>
     private lateinit var onlineData: MovieDbResponse
     private lateinit var movieDetails: MovieDetailsResponse
     private lateinit var movieCast: MovieDbCastResponse
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-//            offlineMoviesRepository.insertMovie(MovieItem(title = "despicables"))
             getMovieList()
 //            offlineData = offlineMoviesRepository.getMoviesList()
+
         }
     }
 
@@ -65,7 +66,7 @@ class MovieViewModel(
         }
     }
 
-    fun getMovieDetails() {
+    private fun getMovieDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 movieDetails = _uiState.value.movieAppUiState.detailedMovieId?.let {
@@ -105,9 +106,6 @@ class MovieViewModel(
             movie.runtime = movieDetails.runtime
             movie.cast = movieCast.cast.subList(0,6)
             movie.crew = movieCast.crew.find { it.department == "Directing" }!!
-            if(movie.crew == null) {
-                return
-            }
             movie.cast.forEach {
                 it.profilePath = imageUrlPrefix.plus(it.profilePath)
             }
@@ -142,6 +140,15 @@ class MovieViewModel(
 
     }
 
+    fun onProfileClicked() {
+        _uiState.update {
+            it.copy(
+                movieAppUiState = _uiState.value.movieAppUiState.copy(
+                    profilePopUp = true,
+                )
+            )
+        }
+    }
     fun changeTheme() {
         _uiState.update {
             it.copy(
@@ -169,16 +176,7 @@ class MovieViewModel(
             it.copy(
                 movieAppUiState = _uiState.value.movieAppUiState.copy(
                     detailsPopUp = false,
-                )
-            )
-        }
-    }
-
-    fun navigateToDetailsScreen() {
-        _uiState.update {
-            it.copy(
-                movieAppUiState = _uiState.value.movieAppUiState.copy(
-                    detailsPopUp = false,
+                    profilePopUp = false,
                 )
             )
         }
@@ -239,6 +237,9 @@ class MovieViewModel(
                 )
             )
         }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            offlineMoviesRepository.insertMovie(MovieItem(movie = movie))
+//        }
         return movie.isFavourite
     }
 //    private val _movies = MutableStateFlow<PagingData>(MovieUiState())

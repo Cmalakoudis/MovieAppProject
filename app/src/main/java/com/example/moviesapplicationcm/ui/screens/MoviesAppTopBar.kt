@@ -64,6 +64,7 @@ import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.wear.compose.material.MaterialTheme.colors
+import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.ui.MovieViewModel
 
 
@@ -71,14 +72,8 @@ import com.example.moviesapplicationcm.ui.MovieViewModel
     @Composable
     fun MoviesTopAppBar(
         checkDark: (Boolean) -> Unit,
-        myViewModel: MovieViewModel,
-        onFilterAllTasks: () -> Unit = {},
-        onFilterActiveTasks: () -> Unit = {},
-        onFilterCompletedTasks: () -> Unit = {},
-        onClearCompletedTasks: () -> Unit = {},
-        onRefresh: () -> Unit = {},
-        loggedIn: Boolean,
-        navigateUp: () -> Unit,
+        uiState: AppUIState,
+        onProfileClicked: () -> Unit,
         modifier: Modifier = Modifier
     ) {
 
@@ -89,7 +84,7 @@ import com.example.moviesapplicationcm.ui.MovieViewModel
             title = { Image(painter = painterResource(id = R.drawable.popcorn), contentDescription = stringResource(
                 id = R.string.popcorn_bucket), modifier.size(32.dp),) },
             navigationIcon = {
-               IconButton(onClick = { /*TODO*/ }) {
+           IconButton(onClick = onProfileClicked, enabled = uiState.movieAppUiState.isLoggedIn) {
                    Image(painter = painterResource(id = R.drawable.profile_pic_emtpy), contentDescription = stringResource(id = R.string.profile_picture),
                        modifier = Modifier
                            .clip(shape = CircleShape)
@@ -107,7 +102,7 @@ import com.example.moviesapplicationcm.ui.MovieViewModel
                 Switch(modifier = modifier
                     .width(32.dp)
                     .height(18.dp)
-                    .padding(vertical = 7.dp), checked = myViewModel.isDarkTheme() , onCheckedChange = checkDark,
+                    .padding(vertical = 7.dp), checked = uiState.movieAppUiState.darkTheme , onCheckedChange = checkDark,
                     colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.onTertiary,
                                                     checkedTrackColor = MaterialTheme.colorScheme.primary,
                                                     uncheckedBorderColor = MaterialTheme.colorScheme.primary,

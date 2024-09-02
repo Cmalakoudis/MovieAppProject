@@ -21,21 +21,17 @@ import kotlinx.coroutines.flow.Flow
 //        ORDER BY arrival_time ASC
 //        """
 //        )
-        @Insert(onConflict = OnConflictStrategy.IGNORE)
-        fun insertMovie(movie: MovieItem)
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        suspend fun insertMovie(movie: MovieItem)
 
         @Update
-        fun updateMovie(movie: MovieItem)
+        suspend fun updateMovie(movie: MovieItem)
 
-        @Query("DELETE FROM favouritemovies WHERE id = :id")
-        fun deleteMovie(id: Int)
+        @Query("DELETE FROM favouritemovies WHERE movieId = :id")
+        suspend fun deleteMovie(id: Int)
 
-        @Query("SELECT title from favouritemovies WHERE id = :id")
-        fun getMovie(id: Int): Flow<List<String>>
-//        fun getMovie(id: Int): Flow<Movie>
-
-        @Query("SELECT title from favouritemovies ORDER BY id ASC")
-        fun getAllMovies(): Flow<List<String>>
+        @Query("SELECT movieId from favouritemovies ORDER BY id ASC")
+         fun getMoviesList(): Flow<List<Int>>
 //        @Query(
 //            """
 //        SELECT * FROM schedule

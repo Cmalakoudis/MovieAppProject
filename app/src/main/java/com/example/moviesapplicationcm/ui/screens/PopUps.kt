@@ -237,68 +237,90 @@ fun MovieDetailsPopUp(
 }
 
 @Composable
-fun LogInInfoPopUp(movie: Movie) {
-    Card(
-        modifier = Modifier.size(width = 345.dp, height = 108.dp),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
-        colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContentColor = MaterialTheme.colorScheme.surface,
-            disabledContainerColor = MaterialTheme.colorScheme.onSurface
-        ),
-        shape = RoundedCornerShape(6.dp),
-    ) {
-        Column (modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp, horizontal = 16.dp), horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top) {
-
-            Row(modifier = Modifier
-                .height(26.1.dp)
-                .width(313.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+fun LogInInfoPopUp(uiState: AppUIState, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier.size(width = 345.dp, height = 108.dp),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContentColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface
+            ),
+            shape = RoundedCornerShape(6.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profile_pic_emtpy),
-                    contentDescription = stringResource(id = R.string.profile_picture),
+
+                Row(
                     modifier = Modifier
-                        .clip(shape = CircleShape)
-                        .border(
-                            BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
-                            CircleShape
+                        .height(26.1.dp)
+                        .width(313.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile_pic_emtpy),
+                        contentDescription = stringResource(id = R.string.profile_picture),
+                        modifier = Modifier
+                            .clip(shape = CircleShape)
+                            .border(
+                                BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                                CircleShape
+                            )
+                            .size(26.1.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = uiState.movieAppUiState.userName,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(600),
+                        lineHeight = 19.36.sp,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = {onDismiss()},
+                        modifier = Modifier.size(24.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.close),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
-                        .size(26.1.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "Long Username",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(600),
-                    lineHeight = 19.36.sp,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = {/*send heart true/false */ },
-                    modifier = Modifier.size(24.dp),) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.close), contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground
+                    }
+                }
+                Spacer(modifier = Modifier.height(40.dp))
+                TextButton(
+                    onClick = {/*Go to details Page */ },
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = White,
+                        disabledContentColor = White
+                    ),
+                    modifier = Modifier
+                        .width(119.dp)
+                        .height(25.dp),
+                    contentPadding = PaddingValues(0.dp),
+
+                    ) {
+                    Text(
+                        text = stringResource(id = R.string.sign_out),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.width(78.dp),
+                        lineHeight = 17.sp,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(400)
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(40.dp))
-            TextButton(onClick = {/*Go to details Page */},
-                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary, disabledContainerColor = White, disabledContentColor = White),
-                modifier = Modifier
-                    .width(119.dp)
-                    .height(25.dp),
-                contentPadding = PaddingValues(0.dp),
-
-                ) {
-                Text(text = stringResource(id = R.string.sign_out), textAlign = TextAlign.Center ,modifier = Modifier.width(78.dp), lineHeight = 17.sp, fontSize = 14.sp, fontWeight = FontWeight(400))
             }
         }
     }

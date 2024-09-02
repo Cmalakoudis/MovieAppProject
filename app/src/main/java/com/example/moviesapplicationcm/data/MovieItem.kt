@@ -3,6 +3,8 @@ package com.example.moviesapplicationcm.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.moviesapplicationcm.model.Cast
+import com.example.moviesapplicationcm.model.Crew
 import com.example.moviesapplicationcm.model.Movie
 import org.checkerframework.checker.nullness.qual.NonNull
 
@@ -10,6 +12,6 @@ import org.checkerframework.checker.nullness.qual.NonNull
 data class MovieItem(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    @ColumnInfo(name = "title")
-    val title: String
+    @ColumnInfo(name = "movieId")
+    val movieId: Int,
 )

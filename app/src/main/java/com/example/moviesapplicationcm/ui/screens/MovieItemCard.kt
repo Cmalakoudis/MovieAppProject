@@ -45,7 +45,6 @@ fun MovieCard(
     uiState: AppUIState,
     movieId: Int,
     onCardClicked: (movie: Movie) -> Unit,
-    isDarkTheme: Boolean,
     onFavouriteClick: (movie: Movie) -> Boolean,
 ) {
     val movie = uiState.movieListData.movieList.find { it.id == movieId }
@@ -115,7 +114,7 @@ fun MovieCard(
                                 lineHeight = 14.52.sp
                             )
                         }
-                        HeartButton(movieId = movie.id, uiState = uiState , isDarkTheme = isDarkTheme, onCLick = onFavouriteClick )
+                        HeartButton(movieId = movie.id, uiState = uiState , isDarkTheme = uiState.movieAppUiState.darkTheme, onCLick = onFavouriteClick )
                     }
     
     

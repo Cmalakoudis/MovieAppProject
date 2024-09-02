@@ -37,23 +37,11 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
             BasicScreenLayout(
                 screenContent = { MovieListContent(
                     uiState = uiState,
-                    isDarkTheme = myViewModel.isDarkTheme(),
                     onCardClicked = { movie -> myViewModel.onPressedCard(movie) },
                     onFavouriteClick = { movie -> myViewModel.makeFavourite(movie) },
                     retryAction = { myViewModel.getMovieList()}
                     ) },
                 myViewModel = myViewModel,
-            )
-            val myMovie = Movie(
-                1,
-                stringResource(id = R.string.movie_title),
-                stringResource(id = R.string.movie_discription),
-                "R.drawable.previewpic",
-                "R.drawable.previewbackround",
-                stringResource(id = R.string.movie_release_date),
-                stringResource(id = R.string.movie_rating),
-                123,
-                false
             )
             if (detailsPanel) {
 
@@ -74,14 +62,6 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
                         )
                     }
                 }
-            } else if (loginInfoPanel) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    LogInInfoPopUp(movie = myMovie)
-                }
             }
         }
     }
@@ -91,7 +71,6 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
 @Composable
 private fun MovieListContent(uiState: AppUIState,
                              onCardClicked: (movie: Movie) -> Unit,
-                             isDarkTheme: Boolean,
                              onFavouriteClick: (movie: Movie) -> Boolean,
                              retryAction: () -> Unit) {
     Log.d("MovieListScreen", "favouriteMovieIDs: ${uiState.movieListData.favouriteMovieIDs}")
@@ -116,7 +95,6 @@ private fun MovieListContent(uiState: AppUIState,
                         val movie = uiState.movieListData.movieList[movieIndex]
                         MovieCard(movieId = movie.id,
                             onCardClicked =  onCardClicked,
-                            isDarkTheme = isDarkTheme,
                             onFavouriteClick = onFavouriteClick,
                             uiState = uiState
                             )
@@ -127,13 +105,14 @@ private fun MovieListContent(uiState: AppUIState,
                         val movie = uiState.movieListData.movieList.find { it.id == uiState.movieListData.favouriteMovieIDs[movieIndex] }!!
                         MovieCard(movieId = movie.id,
                             onCardClicked =  onCardClicked,
-                            isDarkTheme = isDarkTheme,
                             onFavouriteClick = onFavouriteClick,
                             uiState = uiState
                         )
                     }
                 }
             }
+
+            else -> {}
         }
     }
 }
