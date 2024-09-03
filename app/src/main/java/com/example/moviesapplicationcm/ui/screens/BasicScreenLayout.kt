@@ -84,15 +84,61 @@ fun BasicScreenLayout(
     }
 }
 
+@Composable
+fun BasicScreenLayoutContent(
+    modifier: Modifier = Modifier,
+    screenContent: @Composable ()->Unit,
+    floatingActionButton:@Composable () -> Unit = {}, //viewmodel.login
+    profilePopUp:Boolean = false,
+) {
+    Surface(color = colorScheme.primary) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            topBar = {
+                MoviesTopAppBarContent( checkButton = true)
+            },
+            floatingActionButton = floatingActionButton,
+            bottomBar = { MoviesBottomAppBarContent() }
+
+        ) { paddingValues ->
+            Column(
+                modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                HorizontalDivider(
+                    modifier = modifier
+                        .width(360.dp)
+                        .align(Alignment.CenterHorizontally),
+                    thickness = 2.dp, color = colorScheme.primary,
+                )
+                Spacer(modifier = modifier.weight(1f))
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    screenContent()
+                    if (profilePopUp) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LogInInfoPopUpContent()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Preview
 @Composable
 fun LayoutScreenPreview() {
-//    BasicScreenLayout(
-//        screenContent = { Image(painter =painterResource(R.drawable.heart_full), contentDescription =null )},
-//        topBarTitle = R.string.app_name,
-//        onNameChange = {},
-//        userName = "username"
-//    )
+    BasicScreenLayout(
+        screenContent = { Image(painter =painterResource(R.drawable.heart_full), contentDescription =null )},
+        myViewModel = viewModel()
+        )
 }
 

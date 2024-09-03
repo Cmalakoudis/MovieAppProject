@@ -152,6 +152,26 @@ fun HeartButton(uiState: AppUIState,movieId:Int, isDarkTheme: Boolean, onCLick: 
     }
 }
 
+@Composable
+fun HeartButtonContent(favourite:Boolean = false, isDarkTheme: Boolean = false) {
+    val heartPainter = if (favourite) {
+        painterResource(id = R.drawable.heart_full)
+    } else {
+        painterResource(id = R.drawable.heart_off)
+    }
+    val heartTint = if (favourite || isDarkTheme) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.onPrimary
+    }
+
+    IconButton(onClick ={
+    } ,modifier = Modifier.size(16.dp),) {
+        Icon(painter = heartPainter, contentDescription = null ,
+            tint =heartTint,)
+    }
+}
+
 @Preview
 @Composable
 fun MovieCardPreview() {

@@ -24,7 +24,9 @@ import com.example.moviesapplicationcm.MoviesApplication
         val Factory = viewModelFactory {
                 // Initializer for HomeViewModel
                 initializer {
-                    MovieViewModel(inventoryApplication().container.offlineMoviesRepository, inventoryApplication().container.moviesRepository)
+                    MovieViewModel(inventoryApplication().container.offlineMoviesRepository,
+                                    inventoryApplication().container.moviesRepository,
+                                    inventoryApplication().container.userPreferencesRepository)
                 }
             }
         }

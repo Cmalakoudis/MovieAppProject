@@ -5,8 +5,8 @@ import com.example.moviesapplicationcm.model.Movie
 data class AppUIState(
     val movieAppUiState: MovieAppUiState = MovieAppUiState(),
     val networkUiState: NetworkUiState = NetworkUiState.Loading,
-    val movieListData: MovieListData = MovieListData()) {
-
+    val movieListData: MovieListData = MovieListData(),
+) {
     sealed interface NetworkUiState {
         data object Loading : NetworkUiState
 

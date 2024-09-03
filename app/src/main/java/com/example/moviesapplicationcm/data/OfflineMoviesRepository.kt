@@ -8,12 +8,16 @@ import com.example.moviesapplicationcm.model.MovieDetailsResponse
 import kotlinx.coroutines.flow.Flow
 
 class OfflineMoviesRepository(private val movieDao: MoviesDao) {
-    suspend fun getMoviesList(): Flow<List<Int>> {
-        TODO()
+    suspend fun getMoviesList(userName: String): Flow<List<Int>> {
+        return (movieDao.getMoviesList(userName))
     }
 
-    suspend fun insertMovie(movieId: Int) {
-        movieDao.insertMovie(movieId)
+    suspend fun insertMovie(movie: MovieItem) {
+        movieDao.insertMovie(movie)
+    }
+
+    suspend fun getMovieItem(userName: String): Flow<MovieItem> {
+        return movieDao.getMovieItem(userName)
     }
 
     suspend fun deleteMovie(id:Int) {

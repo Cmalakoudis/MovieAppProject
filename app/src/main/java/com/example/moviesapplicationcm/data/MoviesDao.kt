@@ -27,11 +27,15 @@ import kotlinx.coroutines.flow.Flow
         @Update
         suspend fun updateMovie(movie: MovieItem)
 
-        @Query("DELETE FROM favouritemovies WHERE movieId = :id")
+        @Query("DELETE FROM favouritemovies WHERE movieIds = :id")
         suspend fun deleteMovie(id: Int)
 
-        @Query("SELECT movieId from favouritemovies ORDER BY id ASC")
-         fun getMoviesList(): Flow<List<Int>>
+        @Query("SELECT movieIds from favouritemovies Where userName == :userName")
+         fun getMoviesList(userName:String): Flow<List<Int>>
+
+         @Query("SELECT * from favouritemovies Where userName == :userName")
+         fun getMovieItem(userName: String): Flow<MovieItem>
+
 //        @Query(
 //            """
 //        SELECT * FROM schedule

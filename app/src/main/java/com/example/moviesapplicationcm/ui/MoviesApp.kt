@@ -42,8 +42,8 @@ fun MoviesApp(
 
         composable(route = MovieAppScreen.Start.name) {
             LogInScreen(myViewModel = movieViewModel,
-                onKeyboardDone = { navController.navigate(MovieAppScreen.Movies.name) },
-                onFabPressed = { navController.navigate(MovieAppScreen.Movies.name) })
+                onKeyboardDone = { movieViewModel.loadUserProfile {navController.navigate(MovieAppScreen.Movies.name) } },
+                onFabPressed = { movieViewModel.loadUserProfile {navController.navigate(MovieAppScreen.Movies.name) } })
         }
 
         composable(route = MovieAppScreen.Movies.name) {

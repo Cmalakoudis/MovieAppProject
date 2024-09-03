@@ -12,6 +12,9 @@ import org.checkerframework.checker.nullness.qual.NonNull
 data class MovieItem(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    @ColumnInfo(name = "movieId")
-    val movieId: Int,
+    @ColumnInfo(name = "userName")
+    val userName: String,
+    @ColumnInfo(name = "movieIds")
+    val movieIds: List<Int>,
 )
+

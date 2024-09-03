@@ -6,6 +6,7 @@ import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.data.MovieItem
 import com.example.moviesapplicationcm.data.MoviesRepository
 import com.example.moviesapplicationcm.data.OfflineMoviesRepository
+import com.example.moviesapplicationcm.data.UserPreferencesRepository
 import com.example.moviesapplicationcm.model.Movie
 import com.example.moviesapplicationcm.model.MovieDbCastResponse
 import com.example.moviesapplicationcm.model.MovieDbResponse
@@ -24,30 +25,75 @@ import kotlin.math.roundToInt
 
 class MovieViewModel(
     private val offlineMoviesRepository: OfflineMoviesRepository,
-    private val moviesRepository: MoviesRepository
-) : ViewModel() {
+    private val moviesRepository: MoviesRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+    ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AppUIState())
     val uiState: StateFlow<AppUIState> = _uiState.asStateFlow()
 
-    private lateinit var offlineData: Flow<List<Int>>
+    private lateinit var favouriteMovieList: Flow<List<Int>>
+    private lateinit var appPreferences: Flow<AppUIState.MovieAppUiState>
     private lateinit var onlineData: MovieDbResponse
     private lateinit var movieDetails: MovieDetailsResponse
     private lateinit var movieCast: MovieDbCastResponse
 
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            getPreferences()
             getMovieList()
-//            offlineData = offlineMoviesRepository.getMoviesList()
 
         }
     }
 
+    //Get User preferences
+     private suspend fun getPreferences() {
+        lateinit var mypreferences: AppUIState.MovieAppUiState
+        appPreferences = userPreferencesRepository.preferences
+        val init = viewModelScope.launch(Dispatchers.IO) {
+             appPreferences.collect { userPreferences ->
+                 mypreferences = AppUIState.MovieAppUiState(darkTheme = userPreferences.darkTheme,
+                     isLoggedIn = userPreferences.isLoggedIn, userName = userPreferences.userName)
+            }
+        }
+        init.join()
+        _uiState.update {
+            it.copy(
+                movieAppUiState = _uiState.value.movieAppUiState.copy(
+                    darkTheme = mypreferences.darkTheme,
+                    isLoggedIn = mypreferences.isLoggedIn,
+                    userName = mypreferences.userName
+                )
+            )
+        }
+    }
+
+
+//    fun selectLayout(isLinearLayout: Boolean) {
+//        viewModelScope.launch {
+//            userPreferencesRepository.saveLayoutPreference(isLinearLayout)
+//        }
+//    }
+//    super {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            offlineMoviesRepos`itory.deleteMovie(_uiState.value.movieAppUiState.detailedMovieId!!)
+//        }
+//    }
+    //Load user profile after logging in
+    fun loadUserProfile(navigateNext:()->Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favouriteMovieList = offlineMoviesRepository.getMoviesList(uiState.value.movieAppUiState.userName)
+        }
+        navigateNext()
+    }
+
+    //Make api call and gather online data
     fun getMovieList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 onlineData = moviesRepository.getMoviesList()
-                println("GOT THE GOOOOOOOOOOOOOOOOOOOODs")
+                println("Successfully fetched data")
                 _uiState.update {
                     it.copy(networkUiState = AppUIState.NetworkUiState.Success)
                 }
@@ -58,7 +104,7 @@ class MovieViewModel(
                     it.copy(networkUiState = AppUIState.NetworkUiState.Error)
                 }
             } catch (e: HttpException) {
-                println("I FUCKED UUUUUUUUUUUUUUUUUUUUUUUUUP" + e)
+                println("Something went wrong: $e")
                 _uiState.update {
                     it.copy(networkUiState = AppUIState.NetworkUiState.Error)
                 }
@@ -66,6 +112,7 @@ class MovieViewModel(
         }
     }
 
+    //Make api call and register extra movie details
     private fun getMovieDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -87,7 +134,7 @@ class MovieViewModel(
                     it.copy(networkUiState = AppUIState.NetworkUiState.Error)
                 }
             } catch (e: HttpException) {
-                println("I FUCKED UUUUUUUUUUUUUUUUUUUUUUUUUP" + e)
+                println("Something went Wrong: $e")
                 _uiState.update {
                     it.copy(networkUiState = AppUIState.NetworkUiState.Error)
                 }
@@ -96,6 +143,7 @@ class MovieViewModel(
 
     }
 
+    //Collect extra movie details and add to the movie list
     private fun collectMovieDetails() {
 
         val movie = _uiState.value.movieListData.movieList.find {
@@ -114,6 +162,7 @@ class MovieViewModel(
 
     }
 
+    //Add movie data to the movie list
     private val imageUrlPrefix = "https://image.tmdb.org/t/p/original"
     private fun collectMovies() {
         val movieLists: MutableList<Movie> = mutableListOf()
@@ -140,6 +189,7 @@ class MovieViewModel(
 
     }
 
+    //Display profile pop up
     fun onProfileClicked() {
         _uiState.update {
             it.copy(
@@ -149,6 +199,8 @@ class MovieViewModel(
             )
         }
     }
+
+    //Change theme
     fun changeTheme() {
         _uiState.update {
             it.copy(
@@ -159,6 +211,7 @@ class MovieViewModel(
         }
     }
 
+    //Display details pop up
     fun onPressedCard(movie: Movie) {
         _uiState.update {
             it.copy(
@@ -171,6 +224,7 @@ class MovieViewModel(
         getMovieDetails()
     }
 
+    //Close pop ups
     fun closePopUp() {
         _uiState.update {
             it.copy(
@@ -182,10 +236,7 @@ class MovieViewModel(
         }
     }
 
-    fun isDarkTheme(): Boolean {
-        return _uiState.value.movieAppUiState.darkTheme
-    }
-
+    //ViewPopular or ViewFavourites
     fun viewingPopular(): Boolean {
         _uiState.update {
             it.copy(
@@ -208,6 +259,7 @@ class MovieViewModel(
         return false;
     }
 
+    //Update user name on login
     fun updateUserName(name: String) {
         _uiState.update {
             it.copy(
@@ -218,6 +270,7 @@ class MovieViewModel(
         }
     }
 
+    //Update user favourite preferences
     fun makeFavourite(movie: Movie): Boolean {
         movie.isFavourite = !movie.isFavourite
         val newIDs: List<Int> = if (movie.isFavourite) {
@@ -237,89 +290,22 @@ class MovieViewModel(
                 )
             )
         }
-//        viewModelScope.launch(Dispatchers.IO) {
-//            offlineMoviesRepository.insertMovie(MovieItem(movie = movie))
-//        }
+        viewModelScope.launch(Dispatchers.IO) {
+            offlineMoviesRepository.getMovieItem(_uiState.value.movieAppUiState.userName).collect {
+                    if (movie.isFavourite) {
+                        offlineMoviesRepository.updateMovie(
+                            MovieItem(
+                                id = it.id,
+                                userName = it.userName,
+                                movieIds = it.movieIds.plus(movie.id)
+                            )
+                        )
+                    }else {
+                            offlineMoviesRepository.updateMovie(MovieItem(id = it.id, userName = it.userName, movieIds = it.movieIds.minus(movie.id)))
+                    }
+            }
+        }
         return movie.isFavourite
     }
-//    private val _movies = MutableStateFlow<PagingData>(MovieUiState())
-//    val movies: StateFlow<MovieUiState> = _movies.asStateFlow()
-//    private fun getMoviesList() {
-//        viewModelScope.launch {
-//            try {
-//    val listResult = moviesRepository.getMoviesList()
-//
-//            }
-//        }
-//    }
 
-
-//    fun setQuantity(numberCupcakes: Int) {
-//        _uiState.update { currentState ->
-//            currentState.copy(
-//                quantity = numberCupcakes,
-//                price = calculatePrice(quantity = numberCupcakes)
-//            )
-//        }
-//    }
-//
-//    /**
-//     * Set the [desiredFlavor] of cupcakes for this order's state.
-//     * Only 1 flavor can be selected for the whole order.
-//     */
-//    fun setFlavor(desiredFlavor: String) {
-//        _uiState.update { currentState ->
-//            currentState.copy(flavor = desiredFlavor)
-//        }
-//    }
-//
-//    /**
-//     * Set the [pickupDate] for this order's state and update the price
-//     */
-//    fun setDate(pickupDate: String) {
-//        _uiState.update { currentState ->
-//            currentState.copy(
-//                date = pickupDate,
-//                price = calculatePrice(pickupDate = pickupDate)
-//            )
-//        }
-//    }
-//
-//    /**
-//     * Reset the order state
-//     */
-//    fun resetOrder() {
-//        _uiState.value = MovieUiState()
-//    }
-//
-//    /**
-//     * Returns the calculated price based on the order details.
-//     */
-//    private fun calculatePrice(
-//        quantity: Int = _uiState.value.quantity,
-//        pickupDate: String = _uiState.value.date
-//    ): String {
-//        var calculatedPrice = quantity * PRICE_PER_CUPCAKE
-//        // If the user selected the first option (today) for pickup, add the surcharge
-//        if (pickupOptions()[0] == pickupDate) {
-//            calculatedPrice += PRICE_FOR_SAME_DAY_PICKUP
-//        }
-//        val formattedPrice = NumberFormat.getCurrencyInstance().format(calculatedPrice)
-//        return formattedPrice
-//    }
-//
-//    /**
-//     * Returns a list of date options starting with the current date and the following 3 dates.
-//     */
-//    private fun pickupOptions(): List<String> {
-//        val dateOptions = mutableListOf<String>()
-//        val formatter = SimpleDateFormat("E MMM d", Locale.getDefault())
-//        val calendar = Calendar.getInstance()
-//        // add current date and the following 3 dates.
-//        repeat(4) {
-//            dateOptions.add(formatter.format(calendar.time))
-//            calendar.add(Calendar.DATE, 1)
-//        }
-//        return dateOptions
-//    }
 }

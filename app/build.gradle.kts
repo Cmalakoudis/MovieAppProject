@@ -100,4 +100,5 @@ dependencies {
     ksp(libs.dagger.compiler)
     ksp(libs.androidx.room.compiler)
     implementation (libs.converter.gson)
+    implementation(libs.androidx.datastore.preferences)
 }

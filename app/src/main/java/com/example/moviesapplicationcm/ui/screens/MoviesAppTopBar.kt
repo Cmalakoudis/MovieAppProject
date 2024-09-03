@@ -119,6 +119,54 @@ import com.example.moviesapplicationcm.ui.MovieViewModel
         )
     }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MoviesTopAppBarContent(
+    modifier: Modifier = Modifier,
+    checkButton: Boolean = true,
+) {
+
+    CenterAlignedTopAppBar(
+        modifier = modifier
+            .padding(start = 12.dp)
+            .fillMaxWidth(),
+        title = { Image(painter = painterResource(id = R.drawable.popcorn), contentDescription = stringResource(
+            id = R.string.popcorn_bucket), modifier.size(32.dp),) },
+        navigationIcon = {
+            IconButton(onClick = { }, enabled = true) {
+                Image(painter = painterResource(id = R.drawable.profile_pic_emtpy), contentDescription = stringResource(id = R.string.profile_picture),
+                    modifier = Modifier
+                        .clip(shape = CircleShape)
+                        .border(
+                            BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                            CircleShape
+                        )
+                        .size(32.dp), contentScale = ContentScale.Fit
+                )
+            }
+
+
+        },
+        actions = {
+            Switch(modifier = modifier
+                .width(32.dp)
+                .height(18.dp)
+                .padding(vertical = 7.dp), checked = checkButton, onCheckedChange = { },
+                colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colorScheme.onTertiary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                    uncheckedBorderColor = MaterialTheme.colorScheme.primary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary,
+                ))
+            Spacer(modifier = Modifier.width(20.dp))
+            Icon(painter = painterResource(id = R.drawable.vectormoon), contentDescription = stringResource(id = R.string.moon)
+                , modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onSecondary)
+            Spacer(modifier = Modifier.width(8.dp))
+        },
+        colors = TopAppBarDefaults.topAppBarColors( containerColor = Color.Transparent)
+    )
+}
 // OPTIONS MENU GIA SEARCG KTL META
 
 //@Composable
@@ -172,7 +220,7 @@ import com.example.moviesapplicationcm.ui.MovieViewModel
 private fun MoviesTopAppBarPreview() {
     MoviesApplicationCMTheme {
         Surface {
-//            MoviesTopAppBar({}, {}, {}, {}, {}, loggedIn = false, navigateUp = {}, )
+            MoviesTopAppBarContent(checkButton = true)
         }
     }
 }

@@ -31,11 +31,10 @@ import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
     val uiState by myViewModel.uiState.collectAsState()
     val detailsPanel = uiState.movieAppUiState.detailsPopUp
-    val loginInfoPanel = false
     MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
         Box(modifier = Modifier.fillMaxSize()) {
             BasicScreenLayout(
-                screenContent = { MovieListContent(
+                screenContent = { MovieListComposables(
                     uiState = uiState,
                     onCardClicked = { movie -> myViewModel.onPressedCard(movie) },
                     onFavouriteClick = { movie -> myViewModel.makeFavourite(movie) },
@@ -55,7 +54,6 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
                         MovieDetailsPopUp(
                             movieId = movie.id,
                             uiState = uiState,
-                            isDarkTheme = myViewModel.isDarkTheme(),
                             makeFavourite = myViewModel::makeFavourite,
                             onDetailsPressed = onDetailsPressed,
                             onDismiss = { myViewModel.closePopUp() }
@@ -69,7 +67,7 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
 
 
 @Composable
-private fun MovieListContent(uiState: AppUIState,
+private fun MovieListComposables(uiState: AppUIState,
                              onCardClicked: (movie: Movie) -> Unit,
                              onFavouriteClick: (movie: Movie) -> Boolean,
                              retryAction: () -> Unit) {

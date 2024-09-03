@@ -31,18 +31,10 @@ import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.ui.MovieViewModel
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesBottomAppBar(
     modifier: Modifier = Modifier,
     myViewModel: MovieViewModel,
-    openDrawer: () -> Unit = {},
-    onFilterAllTasks: () -> Unit = {},
-    onFilterActiveTasks: () -> Unit = {},
-    onFilterCompletedTasks: () -> Unit = {},
-    onClearCompletedTasks: () -> Unit = {},
-    onRefresh: () -> Unit = {},
-    navigateUp: () -> Unit = {},
 ) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.tertiary,
@@ -81,26 +73,54 @@ fun MoviesBottomAppBar(
 
     }
 }
+
+@Composable
+fun MoviesBottomAppBarContent(
+    modifier: Modifier = Modifier,
+    viewingPopular: Boolean = true,
+) {
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.tertiary,
+        modifier = Modifier.fillMaxWidth(),){
+        Row(
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 16.dp), horizontalArrangement = Arrangement.Center){
+            Spacer(modifier = Modifier.weight(0.05f))
+            TextButton(onClick = {},
+                modifier = Modifier.weight(1f),
+                enabled = !viewingPopular,
+                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary)) {
+                Icon(painterResource(id = R.drawable.vector), contentDescription = null)
+                Spacer(modifier = Modifier.size(4.dp))
+                Text(text = stringResource(id = R.string.popular))
+            }
+            Spacer(modifier = Modifier.weight(0.10f))
+            TextButton(onClick = {},
+                modifier = Modifier.weight(1f),
+                enabled = viewingPopular,
+                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary)) {
+                Icon(painterResource(id = R.drawable.heart_full) , contentDescription = null)
+                Spacer(modifier = Modifier.size(4.dp))
+                Text(text = stringResource(id = R.string.favourites))
+            }
+            Spacer(modifier = Modifier.weight(0.05f))
+        }
+
+    }
+}
 @Preview
 @Composable
 private fun MovieBottomAppBarPreview() {
     MoviesApplicationCMTheme {
         Surface {
-//            MoviesBottomAppBar(isPopular = true, navigateUp = { /*TODO*/ })
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun MovieBottomAppWholeBarPreview() {
-    MoviesApplicationCMTheme {
-        Surface {
-//            LogInScreen(
-//                onNameChange = {},
-//                onKeyboardDone = {},
-//                 userName = "username"
-//            )
+            MoviesBottomAppBarContent()
         }
     }
 }

@@ -1,14 +1,16 @@
 package com.example.moviesapplicationcm.data
+
 import com.example.moviesapplicationcm.network.MoviesApiService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
-import android.content.Context
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import retrofit2.converter.gson.GsonConverterFactory
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import com.example.moviesapplicationcm.data.UserPreferencesRepository
 
 /**
  * Dependency Injection container at the application level.
@@ -16,12 +18,18 @@ import retrofit2.converter.gson.GsonConverterFactory
 interface AppContainer {
     val moviesRepository: MoviesRepository
     val offlineMoviesRepository: OfflineMoviesRepository
+    val userPreferencesRepository: UserPreferencesRepository
 }
 /**
  * Implementation for the Dependency Injection container at the application level.
  *
  * Variables are initialized lazily and the same instance is shared across the whole app.
  */
+private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = LAYOUT_PREFERENCE_NAME
+)
 class DefaultAppContainer(private val context: Context) : AppContainer {
     private val baseUrl = "https://api.themoviedb.org/3/"
 
@@ -37,10 +45,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
-//            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(MoviesApiService::class.java)
     }
+
 
     /**
      * DI implementation for Movie photos repository
@@ -51,5 +59,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val offlineMoviesRepository: OfflineMoviesRepository by lazy {
         OfflineMoviesRepository(MoviesDataBase.getDatabase(context).moviesDao())
+    }
+
+    override val userPreferencesRepository: UserPreferencesRepository by lazy {
+        UserPreferencesRepository(context.dataStore)
     }
 }

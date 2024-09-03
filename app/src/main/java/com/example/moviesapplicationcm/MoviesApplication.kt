@@ -11,4 +11,9 @@ class MoviesApplication : Application() {
         super.onCreate()
         container = DefaultAppContainer(this)
     }
+    override fun onTerminate() {
+        super.onTerminate()
+        // Code to run when the app is terminating
+
+    }
 }

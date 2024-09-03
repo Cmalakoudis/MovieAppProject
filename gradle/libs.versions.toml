@@ -4,6 +4,7 @@ appcompatV7 = "28.0.0"
 coilCompose = "2.4.0"
 converterGson = "2.11.0"
 daggerCompiler = "2.51.1"
+datastorePreferences = "1.1.1"
 hiltNavigationCompose = "1.2.0"
 koinAndroid = "3.1.2"
 koinCore = "3.1.2"
@@ -34,6 +35,7 @@ appcompat = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
