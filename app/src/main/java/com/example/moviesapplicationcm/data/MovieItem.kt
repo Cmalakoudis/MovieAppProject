@@ -15,6 +15,6 @@ data class MovieItem(
     @ColumnInfo(name = "userName")
     val userName: String,
     @ColumnInfo(name = "movieIds")
-    val movieIds: List<Int>,
+    val movieIds: Int,
 )
 

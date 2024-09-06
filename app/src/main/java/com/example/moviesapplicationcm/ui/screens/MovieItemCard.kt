@@ -1,6 +1,7 @@
 package com.example.moviesapplicationcm.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,7 +56,7 @@ fun MovieCard(
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
         shape = RoundedCornerShape(6.dp),) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage( colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface, blendMode = BlendMode.Softlight, )
+            AsyncImage( colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface, blendMode = BlendMode.Softlight)
                 , modifier = Modifier.fillMaxSize(), alpha = 0.25f
                 , contentScale = ContentScale.Crop, model = movie.backRoundPath, contentDescription = null)
             Row (modifier = Modifier
@@ -77,7 +78,7 @@ fun MovieCard(
 
                     Spacer( modifier = Modifier.height(6.dp))
 
-                    Text(modifier = Modifier.height(40.dp),text = movie.overview, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp, fontWeight = FontWeight(400), lineHeight = 14.52.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Left, )
+                    Text(modifier = Modifier.height(40.dp),text = movie.overview, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp, fontWeight = FontWeight(400), lineHeight = 14.52.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Left)
 
                     Spacer( modifier = Modifier.height(6.dp))
 
@@ -153,6 +154,84 @@ fun HeartButton(uiState: AppUIState,movieId:Int, isDarkTheme: Boolean, onCLick: 
 }
 
 @Composable
+fun MovieCardContent(movie: Movie
+) {
+    Card(
+        modifier = Modifier.size(width = 361.dp, height = 153.dp),
+        onClick = {},
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
+        shape = RoundedCornerShape(6.dp),) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image( colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.surface, blendMode = BlendMode.Softlight)
+                , modifier = Modifier.fillMaxSize(), alpha = 0.25f
+                , contentScale = ContentScale.Crop, painter = painterResource(R.drawable.previewbackround), contentDescription = null)
+            Row (modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
+
+                Image(painter = painterResource(R.drawable.previewpic) , contentDescription = null, modifier = Modifier
+                    .width(95.dp)
+                    .height(120.dp)
+                    .clip(
+                        RoundedCornerShape(16.dp)
+                    ), contentScale = ContentScale.Crop, alignment = Alignment.Center)
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column (modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Top) {
+
+                    Text(modifier = Modifier.height(19.dp), text = movie.title, color = MaterialTheme.colorScheme.onSurface,fontSize = 16.sp  , fontWeight = FontWeight(400), lineHeight = 19.36.sp, overflow = TextOverflow.Ellipsis)
+
+                    Spacer( modifier = Modifier.height(6.dp))
+
+                    Text(modifier = Modifier.height(40.dp),text = movie.overview, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp, fontWeight = FontWeight(400), lineHeight = 14.52.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Left)
+
+                    Spacer( modifier = Modifier.height(6.dp))
+
+                    Row (modifier = Modifier
+                        .width(52.46.dp)
+                        .height(18.dp)){
+                        Icon(painter = painterResource(id = R.drawable.calendarblank), contentDescription = stringResource(id = R.string.calendar),
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.onSurface)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = movie.releaseDate, color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp, fontWeight = FontWeight(400), lineHeight = 14.52.sp)
+                    }
+
+                    Spacer( modifier = Modifier.height(6.dp))
+
+                    Row(modifier = Modifier
+                        .width(218.dp)
+                        .height(24.dp)) {
+                        Row(modifier = Modifier
+                            .width(188.dp)
+                            .height(16.dp), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.star),
+                                contentDescription = stringResource(id = R.string.star),
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = movie.rating,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight(600),
+                                lineHeight = 14.52.sp
+                            )
+                        }
+                        HeartButtonContent(favourite = movie.isFavourite, isDarkTheme = false)
+                    }
+
+
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun HeartButtonContent(favourite:Boolean = false, isDarkTheme: Boolean = false) {
     val heartPainter = if (favourite) {
         painterResource(id = R.drawable.heart_full)
@@ -174,32 +253,17 @@ fun HeartButtonContent(favourite:Boolean = false, isDarkTheme: Boolean = false) 
 
 @Preview
 @Composable
-fun MovieCardPreview() {
-    val myMovie = Movie(1,
-        stringResource(id = R.string.movie_title),
-        stringResource(id = R.string.movie_discription),
-        "","",
-//        painterResource(id = R.drawable.previewpic),
-//        painterResource(id = R.drawable.previewbackround),
-        stringResource(id = R.string.movie_release_date),
-        stringResource(id = R.string.movie_rating),
-        123,
-        false)
+private fun MovieCardPreview() {
     MoviesApplicationCMTheme {
-        Column {
-//            MovieCard(
-//                movie = myMovie,
-//                onCardClicked = {},
-//                isDarkTheme = false,
-//                onFavouriteClick = {true}
-//            )
-//            MovieCard(
-//                movie = myMovie,
-//                onCardClicked = {},
-//                isDarkTheme = true,
-//                onFavouriteClick = {true}
-//            )
-        }
+        MovieCardContent(movie = Movie(1, stringResource(R.string.movie_title),
+            stringResource(R.string.movie_discription),
+            R.drawable.previewpic.toString(),
+            R.drawable.previewbackround.toString(),
+            stringResource(R.string.release_date),
+            stringResource(R.string.rating),
+            stringResource(R.string.rating_reviews).toInt(),
+            false,"Action", 1000, 125 )
+        )
     }
 
 }

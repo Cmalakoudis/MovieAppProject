@@ -34,7 +34,7 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
     MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
         Box(modifier = Modifier.fillMaxSize()) {
             BasicScreenLayout(
-                screenContent = { MovieListComposables(
+                screenContent = { MovieListComposable(
                     uiState = uiState,
                     onCardClicked = { movie -> myViewModel.onPressedCard(movie) },
                     onFavouriteClick = { movie -> myViewModel.makeFavourite(movie) },
@@ -67,11 +67,10 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
 
 
 @Composable
-private fun MovieListComposables(uiState: AppUIState,
+private fun MovieListComposable(uiState: AppUIState,
                              onCardClicked: (movie: Movie) -> Unit,
                              onFavouriteClick: (movie: Movie) -> Boolean,
                              retryAction: () -> Unit) {
-    Log.d("MovieListScreen", "favouriteMovieIDs: ${uiState.movieListData.favouriteMovieIDs}")
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(16.dp)
@@ -109,14 +108,70 @@ private fun MovieListComposables(uiState: AppUIState,
                     }
                 }
             }
-
-            else -> {}
         }
     }
 }
 
 @Composable
-fun LoadingScreen() {
+private fun MovieListComposableContent(networkUiState:Int = 2, viewingPopular:Boolean = true, movieList: List<Movie> ){
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        when(networkUiState) {
+            0 -> {
+                item {
+                    LoadingScreen()
+                }
+            }
+            1 -> {
+                item {
+                    ErrorScreen(retryAction = {})
+                }
+            }
+            2 -> {
+                if(viewingPopular) {
+                    items(movieList.size) { movieIndex ->
+                        val movie = movieList[movieIndex]
+                        MovieCardContent(movie = movie)
+                    }
+                }
+                else {
+                    items(movieList.size) {
+                        val movie = movieList.find { it.isFavourite }!!
+                        MovieCardContent(movie)
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
+}
+@Suppress("SameParameterValue")
+@Composable
+private fun MovieListScreenContent(darkTheme: Boolean= true, detailsPanel:Boolean = false, loginInfoPanel: Boolean = false , movieList: List<Movie>, detailedMovie: Movie) {
+    MoviesApplicationCMTheme(darkTheme = darkTheme) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            BasicScreenLayoutContent( profilePopUp = loginInfoPanel,
+                screenContent = { MovieListComposableContent(movieList = movieList, viewingPopular = true) },
+            )
+            if (detailsPanel) {
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MovieDetailsPopUpContent(detailedMovie)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingScreen() {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
         CircularProgressIndicator(
             modifier = Modifier.size(100.dp),
@@ -127,7 +182,7 @@ fun LoadingScreen() {
 }
 
 @Composable
-fun ErrorScreen(retryAction: () -> Unit) {
+private fun ErrorScreen(retryAction: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
         Text(text = "Error occurred. Retrying...", color = MaterialTheme.colorScheme.error)
         Icon(painter = painterResource(id = R.drawable.baseline_error_outline_24)
@@ -139,6 +194,15 @@ fun ErrorScreen(retryAction: () -> Unit) {
 
 @Preview
 @Composable
-fun PreviewMovieListScreen() {
-//    MovieListScreen()
+fun PreviewMovieListScreen(detailsPanel: Boolean = false, loginInfoPanel:Boolean = false) {
+    val movieList = listOf(Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        Movie(1, stringResource(R.string.movie_title),  stringResource(R.string.movie_discription), R.drawable.previewpic.toString(), R.drawable.previewbackround.toString(), stringResource(R.string.release_date),stringResource(R.string.rating), 1000, false,"Action", 1000, 125 ),
+        )
+
+    MovieListScreenContent(darkTheme = true, detailsPanel = detailsPanel,loginInfoPanel= loginInfoPanel, movieList = movieList, detailedMovie = movieList[0])
 }

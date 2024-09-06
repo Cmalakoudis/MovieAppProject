@@ -28,6 +28,7 @@ class  UserPreferencesRepository(
                 Log.e(TAG, "Error reading preferences.", it)
                 emit(emptyPreferences())
             } else {
+                Log.e(TAG, "Error reading preferences.", it)
                 throw it
             }
         }

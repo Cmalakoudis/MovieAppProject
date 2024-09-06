@@ -1,13 +1,12 @@
 package com.example.moviesapplicationcm.ui.screens
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,8 +22,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -38,17 +35,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moviesapplicationcm.R
-import com.example.moviesapplicationcm.model.Movie
 import com.example.moviesapplicationcm.ui.MovieViewModel
-import com.example.moviesapplicationcm.ui.MoviesViewModelProvider
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 
 @Composable
 fun LogInScreen(
-    modifier: Modifier = Modifier,
     onKeyboardDone: () -> Unit = {}, //viewmodel.login
     onFabPressed: ()-> Unit = {},
     myViewModel: MovieViewModel
@@ -58,7 +50,7 @@ fun LogInScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
             BasicScreenLayout(
-                screenContent = { LogInScreenContent(myViewModel = myViewModel, onKeyboardDone = onKeyboardDone) },
+                screenContent = { LogInScreenBox(myViewModel = myViewModel, onKeyboardDone = onKeyboardDone) },
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = { onFabPressed() },
@@ -75,7 +67,7 @@ fun LogInScreen(
 }
 
 @Composable
-fun LogInScreenContent(
+private fun LogInScreenBox(
     modifier: Modifier = Modifier,
     onKeyboardDone: () -> Unit = {}, //viewmodel.login
     myViewModel: MovieViewModel
@@ -87,13 +79,6 @@ fun LogInScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val mediumPadding = 16.dp
-            HorizontalDivider(
-                modifier = modifier
-                    .width(360.dp)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 2.dp,
-                color = colorScheme.primary,
-            )
             Spacer(modifier = modifier.weight(1f))
             Card(
                 modifier = modifier
@@ -119,6 +104,14 @@ fun LogInScreenContent(
                         style = typography.displayMedium,
                         color = colorScheme.onSurface,
                     )
+                    Row {
+                        Spacer(modifier = Modifier.weight(0.4f))
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            thickness = 2.dp, color = colorScheme.primary,
+                        )
+                        Spacer(modifier = Modifier.weight(0.4f))
+                    }
                     Text(
                         text = stringResource(id = R.string.insert_username),
                         textAlign = TextAlign.Center,
@@ -159,23 +152,115 @@ fun LogInScreenContent(
     }
 
 
+@Composable
+private fun LogInScreenBoxContent(userName:String= "boogerman"
+) {
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val mediumPadding = 16.dp
+        Spacer(modifier = Modifier.weight(1f))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(mediumPadding),
+            elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            shape = shapes.medium,
+            colors = CardColors(
+                containerColor = colorScheme.surface,
+                contentColor = colorScheme.onSurface,
+                disabledContentColor = colorScheme.primary,
+                disabledContainerColor = colorScheme.onPrimary
+            )
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(mediumPadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(mediumPadding)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.login),
+                    style = typography.displayMedium,
+                    color = colorScheme.onSurface,
+                )
+                Row {
+                    Spacer(modifier = Modifier.weight(0.4f))
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        thickness = 2.dp, color = colorScheme.primary,
+                    )
+                    Spacer(modifier = Modifier.weight(0.4f))
+                }
+                Text(
+                    text = stringResource(id = R.string.insert_username),
+                    textAlign = TextAlign.Center,
+                    style = typography.titleMedium,
+                    color = colorScheme.onSurface,
+                )
+                OutlinedTextField(
+                    value = userName,
+                    singleLine = true,
+                    shape = shapes.large,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = colorScheme.surface,
+                        unfocusedContainerColor = colorScheme.primary,
+                        disabledContainerColor = colorScheme.onSurface,
+                    ),
+                    onValueChange ={},
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.username_example),
+                            style = typography.bodySmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colorScheme.onSurface
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { }
+                    )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
+
+    }
+}
 
 
-//@Preview
-//@Composable
-//fun LogInScreenPreview() {
-//    LogInScreen(
-//        onNameChange = {},
-//        onKeyboardDone = {},
-//        userName = "username"
-//    )
-//}
+
+
+@Composable
+private fun LogInScreenContent(
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        BasicScreenLayoutContent(
+            screenContent = { LogInScreenBoxContent() },
+            floatingActionButton = {FloatingActionButton(
+                onClick = { },
+                containerColor = colorScheme.tertiary,
+                contentColor = colorScheme.primary
+            ) {
+                Icon(Icons.Filled.Check, stringResource(id = R.string.app_name))
+            }}
+        )
+    }
+
+}
 
 
 
-//        // Check if the task is saved and call onTaskUpdate event
-//        LaunchedEffect(uiState.isTaskSaved) {
-//            if (uiState.isTaskSaved) {
-//                onTaskUpdate()
-//            }
-//        }
+@Preview
+@Composable
+private fun LogInScreenPreview() {
+    MoviesApplicationCMTheme(darkTheme = true) {
+        LogInScreenContent()
+    }
+}
+

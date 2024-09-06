@@ -30,7 +30,13 @@
         <string name="stars">Stars</string>
     <string name="details">Details</string>
     <string name="sign_out">Sign out</string>
-    <!--    <string name=""></string>-->
+        <string name="cast1">Ryan Reynolds</string>
+        <string name="cast2">Hugh Jackman</string>
+        <string name="cast3">Emma Corrin</string>
+        <string name="cast4">Matthew Macfadyen</string>
+        <string name="cast5">Dafne Keen</string>
+        <string name="cast6">Jon Favreau</string>
+        <string name="director1">Shawn Levy</string>
     <!--    <string name=""></string>-->
     <!--    <string name=""></string>-->
 </resources>

@@ -43,7 +43,6 @@ import coil.compose.AsyncImage
 import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.model.Movie
-import com.example.moviesapplicationcm.ui.MovieViewModel
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import com.example.moviesapplicationcm.ui.theme.White
 
@@ -104,7 +103,7 @@ fun MovieDetailsPopUp(
                         isDarkTheme = uiState.movieAppUiState.darkTheme
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { onDismiss() }, modifier = Modifier.size(24.dp),) {
+                    IconButton(onClick = { onDismiss() }, modifier = Modifier.size(24.dp)) {
                         Icon(
                             painter = painterResource(id = R.drawable.close),
                             contentDescription = null,
@@ -369,7 +368,7 @@ fun MovieDetailsPopUpContent(
                     Spacer(modifier = Modifier.width(16.dp))
                     HeartButtonContent()
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { }, modifier = Modifier.size(24.dp),) {
+                    IconButton(onClick = { }, modifier = Modifier.size(24.dp)) {
                         Icon(
                             painter = painterResource(id = R.drawable.close),
                             contentDescription = null,
@@ -385,8 +384,8 @@ fun MovieDetailsPopUpContent(
                         .width(313.dp)
                         .height(152.dp)
                 ) {
-                    AsyncImage(
-                        model = movie.posterPath,
+                    Image(
+                        painter = painterResource(movie.posterPath.toInt()),
                         contentDescription = null,
                         modifier = Modifier
                             .width(120.dp)
@@ -592,13 +591,14 @@ fun LogInInfoPopUpContent(userName:String = "User Name") {
 
 @Preview
 @Composable
-fun PreviewMovieDetailsPopUp() {
+private fun PreviewMovieDetailsPopUp() {
     MoviesApplicationCMTheme {
-        MovieListScreenContent(detailsPanel = true)
+        PreviewMovieListScreen(detailsPanel = true)
     }
 }
+
 @Preview
 @Composable
-fun PreviewLoginInfoPopUp() {
-    MovieListScreenContent(loginInfoPanel = true)
+private fun PreviewLoginInfoPopUp() {
+    PreviewMovieListScreen(loginInfoPanel = true)
 }

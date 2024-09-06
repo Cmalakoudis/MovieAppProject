@@ -14,8 +14,11 @@ import com.example.moviesapplicationcm.model.MovieDetailsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -51,20 +54,38 @@ class MovieViewModel(
      private suspend fun getPreferences() {
         lateinit var mypreferences: AppUIState.MovieAppUiState
         appPreferences = userPreferencesRepository.preferences
-        val init = viewModelScope.launch(Dispatchers.IO) {
-             appPreferences.collect { userPreferences ->
-                 mypreferences = AppUIState.MovieAppUiState(darkTheme = userPreferences.darkTheme,
-                     isLoggedIn = userPreferences.isLoggedIn, userName = userPreferences.userName)
-            }
-        }
-        init.join()
-        _uiState.update {
-            it.copy(
-                movieAppUiState = _uiState.value.movieAppUiState.copy(
-                    darkTheme = mypreferences.darkTheme,
-                    isLoggedIn = mypreferences.isLoggedIn,
-                    userName = mypreferences.userName
+
+        println("is this even working ? 8==============D")
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val preferencesUiState: StateFlow<AppUIState.MovieAppUiState> = userPreferencesRepository.preferences.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = AppUIState.MovieAppUiState()
+            )
+            mypreferences = AppUIState.MovieAppUiState(darkTheme = preferencesUiState.value.darkTheme,
+                isLoggedIn = preferencesUiState.value.isLoggedIn, userName = preferencesUiState.value.userName)
+
+
+//             appPreferences.collect { userPreferences ->
+//                 mypreferences = AppUIState.MovieAppUiState(darkTheme = userPreferences.darkTheme,
+//                     isLoggedIn = userPreferences.isLoggedIn, userName = userPreferences.userName)
+//            }
+            println("I GOT MY PREFERENCES AND THEY ARE ${mypreferences}")
+            _uiState.update {
+                it.copy(
+                    movieAppUiState = _uiState.value.movieAppUiState.copy(
+                        darkTheme = mypreferences.darkTheme,
+                        isLoggedIn = mypreferences.isLoggedIn,
+                        userName = mypreferences.userName
+                    )
                 )
+            }
+            userPreferencesRepository.savePreferences(
+                isDarkTheme = true,
+                isLoggedIn = _uiState.value.movieAppUiState.isLoggedIn,
+                username = _uiState.value.movieAppUiState.userName
             )
         }
     }
@@ -90,6 +111,7 @@ class MovieViewModel(
 
     //Make api call and gather online data
     fun getMovieList() {
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 onlineData = moviesRepository.getMoviesList()
@@ -207,6 +229,13 @@ class MovieViewModel(
                 movieAppUiState = _uiState.value.movieAppUiState.copy(
                     darkTheme = !_uiState.value.movieAppUiState.darkTheme,
                 )
+            )
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.savePreferences(
+                    isDarkTheme = _uiState.value.movieAppUiState.darkTheme,
+                    isLoggedIn = _uiState.value.movieAppUiState.isLoggedIn,
+                    username = _uiState.value.movieAppUiState.userName
             )
         }
     }

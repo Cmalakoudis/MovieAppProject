@@ -25,10 +25,9 @@ interface AppContainer {
  *
  * Variables are initialized lazily and the same instance is shared across the whole app.
  */
-private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = LAYOUT_PREFERENCE_NAME
+    name = "preferences"
 )
 class DefaultAppContainer(private val context: Context) : AppContainer {
     private val baseUrl = "https://api.themoviedb.org/3/"
