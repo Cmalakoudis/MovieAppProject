@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.moviesapplicationcm.R
 import com.example.moviesapplicationcm.ui.MovieViewModel
@@ -62,6 +63,9 @@ fun LogInScreen(
                 },
                 myViewModel = myViewModel
             )
+            if (uiState.movieAppUiState.isLoggedIn) {
+                LoggedInPopUp(uiState, onSignOut = {myViewModel.onSignOut()} , onProceed ={ onFabPressed()})
+            }
         }
     }
 }
@@ -237,7 +241,7 @@ private fun LogInScreenBoxContent(userName:String= "boogerman"
 
 
 @Composable
-private fun LogInScreenContent(
+fun LogInScreenContent(isLoggedIn: Boolean = false, userName: String = "boogerman"
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         BasicScreenLayoutContent(
@@ -250,6 +254,9 @@ private fun LogInScreenContent(
                 Icon(Icons.Filled.Check, stringResource(id = R.string.app_name))
             }}
         )
+        if (isLoggedIn) {
+            LoggedInPopUpContent(userName)
+        }
     }
 
 }

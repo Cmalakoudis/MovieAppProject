@@ -50,8 +50,12 @@ import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
             title = { Image(painter = painterResource(id = R.drawable.popcorn), contentDescription = stringResource(
                 id = R.string.popcorn_bucket), modifier.size(32.dp),) },
             navigationIcon = {
+                val resource = when(uiState.movieAppUiState.isLoggedIn) {
+                    false -> R.drawable.profile_pic_emtpy
+                    true -> R.drawable.profileicon
+                }
            IconButton(onClick = onProfileClicked, enabled = uiState.movieAppUiState.isLoggedIn) {
-                   Image(painter = painterResource(id = R.drawable.profile_pic_emtpy), contentDescription = stringResource(id = R.string.profile_picture),
+                   Image(painter = painterResource(id =resource), contentDescription = stringResource(id = R.string.profile_picture),
                        modifier = Modifier
                            .clip(shape = CircleShape)
                            .border(

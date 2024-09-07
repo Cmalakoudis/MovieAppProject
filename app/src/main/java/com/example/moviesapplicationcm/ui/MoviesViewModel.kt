@@ -12,6 +12,7 @@ import com.example.moviesapplicationcm.model.MovieDbCastResponse
 import com.example.moviesapplicationcm.model.MovieDbResponse
 import com.example.moviesapplicationcm.model.MovieDetailsResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,7 +48,6 @@ class MovieViewModel(
         }
 
         viewModelScope.launch {
-//            getPreferences()
             collectPreferences()
         }
     }
@@ -66,11 +66,6 @@ class MovieViewModel(
         }
     }
 
-    //    fun selectLayout(isLinearLayout: Boolean) {
-//        viewModelScope.launch {
-//            userPreferencesRepository.saveLayoutPreference(isLinearLayout)
-//        }
-//    }
 //    super {
 //        viewModelScope.launch(Dispatchers.IO) {
 //            offlineMoviesRepos`itory.deleteMovie(_uiState.value.movieAppUiState.detailedMovieId!!)
@@ -82,7 +77,16 @@ class MovieViewModel(
             favouriteMovieList =
                 offlineMoviesRepository.getMoviesList(uiState.value.movieAppUiState.userName)
         }
+
         navigateNext()
+        viewModelScope.launch {
+            delay(1000)
+            userPreferencesRepository.savePreferences(
+                isDarkTheme = _uiState.value.movieAppUiState.darkTheme,
+                isLoggedIn = true,
+                username = _uiState.value.movieAppUiState.userName
+            )
+        }
     }
 
     //Make api call and gather online data
@@ -275,6 +279,22 @@ class MovieViewModel(
         }
     }
 
+    fun onSignOut() {
+        _uiState.update {
+            it.copy(
+                movieAppUiState = _uiState.value.movieAppUiState.copy(
+                    isLoggedIn = false,
+                )
+            )
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.savePreferences(
+                isDarkTheme = _uiState.value.movieAppUiState.darkTheme,
+                isLoggedIn = false,
+                username = _uiState.value.movieAppUiState.userName
+            )
+        }
+    }
     //Update user favourite preferences
     fun makeFavourite(movie: Movie): Boolean {
         movie.isFavourite = !movie.isFavourite

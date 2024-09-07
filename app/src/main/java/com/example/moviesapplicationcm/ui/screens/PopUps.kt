@@ -1,9 +1,12 @@
 package com.example.moviesapplicationcm.ui.screens
 
+import android.util.Log.i
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,16 +23,21 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +53,7 @@ import com.example.moviesapplicationcm.data.AppUIState
 import com.example.moviesapplicationcm.model.Movie
 import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import com.example.moviesapplicationcm.ui.theme.White
+import kotlin.properties.Delegates
 
 
 @Composable
@@ -324,6 +333,260 @@ fun LogInInfoPopUp(uiState: AppUIState, onDismiss: () -> Unit) {
     }
 }
 
+
+
+@Composable
+fun LoggedInPopUp(uiState: AppUIState, onSignOut: () -> Unit, onProceed: () -> Unit) {
+    Dialog(onDismissRequest = { }) {
+        Card(
+            modifier = Modifier.size(width = 345.dp, height = 150.dp),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContentColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface
+            ),
+            shape = RoundedCornerShape(6.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = "You are already logged in as:",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(600),
+                    lineHeight = 19.36.sp,
+                )
+                Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Row(
+//                            modifier = Modifier.onGloballyPositioned {
+//                                componentWidth = with(density) {
+//                                    it.size.height
+//                                }
+//                            },
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val resource = when(uiState.movieAppUiState.isLoggedIn) {
+                            false -> R.drawable.profile_pic_emtpy
+                            true -> R.drawable.profileicon
+                        }
+                        Image(
+                            painter = painterResource(id = resource),
+                            contentDescription = stringResource(id = R.string.profile_picture),
+                            modifier = Modifier
+                                .clip(shape = CircleShape)
+                                .border(
+                                    BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                                    CircleShape
+                                )
+                                .size(26.1.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = uiState.movieAppUiState.userName,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight(600),
+                            lineHeight = 19.36.sp,
+                        )
+                    }
+
+                    HorizontalDivider(
+                        thickness = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Spacer(modifier = Modifier.weight(0.25f))
+                    TextButton(
+                        onClick = {onSignOut() },
+                        colors = ButtonColors(
+                            containerColor = Color.Red,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = White,
+                            disabledContentColor = White
+                        ),
+                        modifier = Modifier
+                            .width(119.dp)
+                            .height(25.dp),
+                        contentPadding = PaddingValues(0.dp),
+
+                        ) {
+                        Text(
+                            text = stringResource(id = R.string.sign_out),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(78.dp),
+                            lineHeight = 17.sp,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight(400)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    TextButton(
+                        onClick = {onProceed() },
+                        colors = ButtonColors(
+                            containerColor = Color.Green,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = White,
+                            disabledContentColor = White
+                        ),
+                        modifier = Modifier
+                            .width(119.dp)
+                            .height(25.dp),
+                        contentPadding = PaddingValues(0.dp),
+
+                        ) {
+                        Text(
+                            text = "Proceed",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(78.dp),
+                            lineHeight = 17.sp,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight(400)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(0.25f))
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun LoggedInPopUpContent(userName: String) {
+    val density = LocalDensity.current
+    var componentWidth by Delegates.notNull<Int>()
+    Dialog(onDismissRequest = { }) {
+        Card(
+            modifier = Modifier.size(width = 345.dp, height = 150.dp),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                disabledContentColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurface
+            ),
+            shape = RoundedCornerShape(6.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = "You are already logged in as:",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(600),
+                    lineHeight = 19.36.sp,
+                )
+                Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                        Row(
+//                            modifier = Modifier.onGloballyPositioned {
+//                                componentWidth = with(density) {
+//                                    it.size.height
+//                                }
+//                            },
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.profile_pic_emtpy),
+                                contentDescription = stringResource(id = R.string.profile_picture),
+                                modifier = Modifier
+                                    .clip(shape = CircleShape)
+                                    .border(
+                                        BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                                        CircleShape
+                                    )
+                                    .size(26.1.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = userName,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight(600),
+                                lineHeight = 19.36.sp,
+                            )
+                        }
+
+                    HorizontalDivider(
+//                        Modifier.width(componentWidth.dp),
+                        thickness = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Spacer(modifier = Modifier.weight(0.25f))
+                    TextButton(
+                        onClick = {/*Go to details Page */ },
+                        colors = ButtonColors(
+                            containerColor = Color.Red,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = White,
+                            disabledContentColor = White
+                        ),
+                        modifier = Modifier
+                            .width(119.dp)
+                            .height(25.dp),
+                        contentPadding = PaddingValues(0.dp),
+
+                        ) {
+                        Text(
+                            text = stringResource(id = R.string.sign_out),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(78.dp),
+                            lineHeight = 17.sp,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight(400)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    TextButton(
+                        onClick = {/*Go to details Page */ },
+                        colors = ButtonColors(
+                            containerColor = Color.Green,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            disabledContainerColor = White,
+                            disabledContentColor = White
+                        ),
+                        modifier = Modifier
+                            .width(119.dp)
+                            .height(25.dp),
+                        contentPadding = PaddingValues(0.dp),
+
+                        ) {
+                        Text(
+                            text = "Proceed",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(78.dp),
+                            lineHeight = 17.sp,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight(400)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(0.25f))
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun MovieDetailsPopUpContent(
     movie: Movie,
@@ -520,7 +783,6 @@ fun LogInInfoPopUpContent(userName:String = "User Name") {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-
                 Row(
                     modifier = Modifier
                         .height(26.1.dp)
@@ -601,4 +863,13 @@ private fun PreviewMovieDetailsPopUp() {
 @Composable
 private fun PreviewLoginInfoPopUp() {
     PreviewMovieListScreen(loginInfoPanel = true)
+}
+
+
+@Preview
+@Composable
+private fun alreadyLoggedInPreview() {
+    MoviesApplicationCMTheme {
+        LogInScreenContent(isLoggedIn = true)
+    }
 }
