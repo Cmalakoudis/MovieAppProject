@@ -179,7 +179,7 @@ private fun MovieDetailsSetup(uiState: AppUIState, onClick: (movie: Movie) -> Bo
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = movie.runtime.toString() + "minutes",
+                    text = movie.runtime.toString() + " minutes",
                     fontWeight = FontWeight(500),
                     fontSize = 14.sp,
                     lineHeight = 16.94.sp,

@@ -35,6 +35,7 @@ fun MoviesApp(
     val currentScreen = MovieAppScreen.valueOf(
         backStackEntry?.destination?.route ?: MovieAppScreen.Start.name
     )
+    movieViewModel.navigateToLogin { navController.navigate(MovieAppScreen.Start.name) }
     NavHost(
         navController = navController,
         startDestination = MovieAppScreen.Start.name,
@@ -49,7 +50,8 @@ fun MoviesApp(
         composable(route = MovieAppScreen.Movies.name) {
             MovieListScreen(
                 myViewModel = movieViewModel,
-                onDetailsPressed = { navController.navigate(MovieAppScreen.MovieDetails.name) })
+                onDetailsPressed = { movieViewModel.closePopUp()
+                    navController.navigate(MovieAppScreen.MovieDetails.name) })
         }
         composable(route = MovieAppScreen.MovieDetails.name) {
             MovieDetailsScreen(myViewModel = movieViewModel, navigateBack = { navController.popBackStack() })

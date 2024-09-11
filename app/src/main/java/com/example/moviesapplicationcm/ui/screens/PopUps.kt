@@ -244,7 +244,7 @@ fun MovieDetailsPopUp(
 }
 
 @Composable
-fun LogInInfoPopUp(uiState: AppUIState, onDismiss: () -> Unit) {
+fun LogInInfoPopUp(uiState: AppUIState, onDismiss: () -> Unit, onSignOut: () -> Unit) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier.size(width = 345.dp, height = 108.dp),
@@ -272,8 +272,12 @@ fun LogInInfoPopUp(uiState: AppUIState, onDismiss: () -> Unit) {
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val resource = when(uiState.movieAppUiState.isLoggedIn) {
+                        false -> R.drawable.profile_pic_emtpy
+                        true -> R.drawable.profileicon
+                    }
                     Image(
-                        painter = painterResource(id = R.drawable.profile_pic_emtpy),
+                        painter = painterResource(id = resource),
                         contentDescription = stringResource(id = R.string.profile_picture),
                         modifier = Modifier
                             .clip(shape = CircleShape)
@@ -306,7 +310,8 @@ fun LogInInfoPopUp(uiState: AppUIState, onDismiss: () -> Unit) {
                 }
                 Spacer(modifier = Modifier.height(40.dp))
                 TextButton(
-                    onClick = {/*Go to details Page */ },
+                    onClick = {onSignOut()
+                              onDismiss()},
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,

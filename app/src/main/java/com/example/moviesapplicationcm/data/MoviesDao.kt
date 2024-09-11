@@ -15,14 +15,15 @@ import kotlinx.coroutines.flow.Flow
      */
     @Dao
     interface MoviesDao {
-//        @Query(
-//            """
-//        SELECT * FROM schedule
-//        ORDER BY arrival_time ASC
-//        """
-//        )
+
+        @Query("DELETE FROM favouritemovies")
+        suspend fun deleteAll()
+
         @Insert(onConflict = OnConflictStrategy.REPLACE)
         suspend fun insertMovie(movie: MovieItem)
+
+        @Delete
+        suspend fun deleteMovie(movie: MovieItem)
 
         @Update
         suspend fun updateMovie(movie: MovieItem)

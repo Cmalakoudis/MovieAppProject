@@ -64,7 +64,7 @@ fun BasicScreenLayout(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            LogInInfoPopUp(uiState= uiState, onDismiss = { myViewModel.closePopUp() })
+                            LogInInfoPopUp(uiState= uiState, onDismiss = { myViewModel.closePopUp() }, onSignOut = {myViewModel.onSignOut()})
                         }
                     }
                 }

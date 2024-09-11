@@ -12,15 +12,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -151,32 +159,6 @@ private fun MoviesTopAppBarPreview() {
 
 // OPTIONS MENU GIA SEARCG KTL META
 
-//@Composable
-//private fun FilterTasksMenu(
-//    onFilterAllTasks: () -> Unit,
-//    onFilterActiveTasks: () -> Unit,
-//    onFilterCompletedTasks: () -> Unit
-//) {
-//    TopAppBarDropdownMenu(
-//        iconContent = {
-//            Icon(
-//                painterResource(id = R.drawable.ic_filter_list),
-//                stringResource(id = R.string.menu_filter)
-//            )
-//        }
-//    ) { closeMenu ->
-//        DropdownMenuItem(onClick = { onFilterAllTasks(); closeMenu() }) {
-//            Text(text = stringResource(id = R.string.nav_all))
-//        }
-//        DropdownMenuItem(onClick = { onFilterActiveTasks(); closeMenu() }) {
-//            Text(text = stringResource(id = R.string.nav_active))
-//        }
-//        DropdownMenuItem(onClick = { onFilterCompletedTasks(); closeMenu() }) {
-//            Text(text = stringResource(id = R.string.nav_completed))
-//        }
-//    }
-//}
-//
 //@Composable
 //private fun MoreTasksMenu(
 //    onClearCompletedTasks: () -> Unit,

@@ -24,6 +24,10 @@ class OfflineMoviesRepository(private val movieDao: MoviesDao) {
         movieDao.deleteMovie(id)
     }
 
+    suspend fun deleteAll() {
+        movieDao.deleteAll()
+    }
+
     suspend fun updateMovie(movie: MovieItem) {
         movieDao.updateMovie(movie)
     }
