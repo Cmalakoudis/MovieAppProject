@@ -48,7 +48,7 @@ import com.example.moviesapplicationcm.ui.theme.MoviesApplicationCMTheme
 import com.example.moviesapplicationcm.ui.theme.White
 
 @Composable
-fun MovieDetailsScreen(myViewModel: MovieViewModel, navigateBack: () -> Unit) {
+fun MovieDetailsScreen(myViewModel: MovieViewModel, navigateBack: () -> Unit, onSignOut:() -> Unit) {
     val uiState by myViewModel.uiState.collectAsState()
     val movie = uiState.movieListData.movieList.find { it.id == uiState.movieAppUiState.detailedMovieId }
     if(movie == null)
@@ -56,8 +56,9 @@ fun MovieDetailsScreen(myViewModel: MovieViewModel, navigateBack: () -> Unit) {
     MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
 
         BasicScreenLayout(
-            screenContent = { MovieDetailsSetup(uiState,{myViewModel.makeFavourite(movie)},navigateBack) },
-            myViewModel = myViewModel
+            screenContent = { MovieDetailsSetup(uiState, {myViewModel.makeFavourite(movie)},navigateBack) },
+            myViewModel = myViewModel,
+            onSignOut = onSignOut
         )
     }
 }

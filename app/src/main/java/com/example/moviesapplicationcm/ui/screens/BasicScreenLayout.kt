@@ -26,6 +26,7 @@ fun BasicScreenLayout(
     modifier: Modifier = Modifier,
     screenContent: @Composable ()->Unit,
     floatingActionButton:@Composable () -> Unit = {}, //viewmodel.login
+    onSignOut: () -> Unit,
     myViewModel: MovieViewModel,
 ) {
     val uiState by myViewModel.uiState.collectAsState()
@@ -64,7 +65,7 @@ fun BasicScreenLayout(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            LogInInfoPopUp(uiState= uiState, onDismiss = { myViewModel.closePopUp() }, onSignOut = {myViewModel.onSignOut()})
+                            LogInInfoPopUp(uiState= uiState, onDismiss = { myViewModel.closePopUp() }, onSignOut = {onSignOut()})
                         }
                     }
                 }

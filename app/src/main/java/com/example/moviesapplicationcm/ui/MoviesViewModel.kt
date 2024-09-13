@@ -44,11 +44,6 @@ class MovieViewModel(
     private lateinit var movieDetails: MovieDetailsResponse
     private lateinit var movieCast: MovieDbCastResponse
 
-    lateinit var navigateToLoginScreen: () -> Unit
-    fun navigateToLogin(navigateLoginScreen: () -> Unit) {
-        navigateToLoginScreen = navigateLoginScreen
-    }
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getMovieList()
@@ -307,7 +302,7 @@ class MovieViewModel(
         }
     }
 
-    fun onSignOut() {
+    fun onSignOut(navigateToLoginScreen:() -> Unit) {
         _uiState.update {
             it.copy(
                 movieAppUiState = _uiState.value.movieAppUiState.copy(

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -498,39 +499,40 @@ fun LoggedInPopUpContent(userName: String) {
                     lineHeight = 19.36.sp,
                 )
                 Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(
+                    Row(
 //                            modifier = Modifier.onGloballyPositioned {
 //                                componentWidth = with(density) {
 //                                    it.size.height
 //                                }
 //                            },
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.profile_pic_emtpy),
-                                contentDescription = stringResource(id = R.string.profile_picture),
-                                modifier = Modifier
-                                    .clip(shape = CircleShape)
-                                    .border(
-                                        BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
-                                        CircleShape
-                                    )
-                                    .size(26.1.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = userName,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight(600),
-                                lineHeight = 19.36.sp,
-                            )
-                        }
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Image(
+                            painter = painterResource(id = R.drawable.profile_pic_emtpy),
+                            contentDescription = stringResource(id = R.string.profile_picture),
+                            modifier = Modifier
+                                .clip(shape = CircleShape)
+                                .border(
+                                    BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                                    CircleShape
+                                )
+                                .size(26.1.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = userName,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight(600),
+                            lineHeight = 19.36.sp,
+                        )
+                    }
 
                     HorizontalDivider(
-//                        Modifier.width(componentWidth.dp),
+                        Modifier.width(IntrinsicSize.Max),
                         thickness = 2.dp,
                         color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
                     )

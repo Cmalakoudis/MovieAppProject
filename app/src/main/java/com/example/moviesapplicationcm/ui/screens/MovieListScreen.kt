@@ -62,7 +62,7 @@ import com.example.moviesapplicationcm.ui.theme.White
 import org.openjdk.tools.javac.jvm.Items
 
 @Composable
-fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
+fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit, onSignOut:() -> Unit) {
     val uiState by myViewModel.uiState.collectAsState()
     val detailsPanel = uiState.movieAppUiState.detailsPopUp
     MoviesApplicationCMTheme(darkTheme = uiState.movieAppUiState.darkTheme) {
@@ -82,6 +82,7 @@ fun MovieListScreen(myViewModel: MovieViewModel, onDetailsPressed: () -> Unit) {
                     stopSearch = { myViewModel.stopSearch() }
                     ) },
                 myViewModel = myViewModel,
+                onSignOut = onSignOut
             )
             if (detailsPanel) {
 

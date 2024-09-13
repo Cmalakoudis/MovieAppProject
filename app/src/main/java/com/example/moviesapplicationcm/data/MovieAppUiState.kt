@@ -38,9 +38,3 @@ data class AppUIState(
     )
 
 }
-
-data class UserPreferencesClass(
-    val darkTheme: Boolean = false,
-    val isLoggedIn: Boolean = true,
-    val userName:String = "",
-)

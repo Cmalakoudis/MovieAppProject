@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import com.example.moviesapplicationcm.ui.MoviesApp
 
 class MainActivity : ComponentActivity() {
-    lateinit var myImageButton: ImageButton
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
